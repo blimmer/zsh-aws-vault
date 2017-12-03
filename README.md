@@ -33,4 +33,5 @@ prompt_aws_vault() {
 ```
 
 Produces this segment in my prompt:
+
 ![screenshot of agnoster theme with aws-vault segment](https://i.imgur.com/BLE0QXg.png)
