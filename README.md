@@ -1,5 +1,5 @@
 # zsh-aws-vault
-oh-my-zsh plugin for aws-vault
+oh-my-zsh plugin for [aws-vault](https://github.com/99designs/aws-vault)
 
 ## Installation
 
