@@ -1,5 +1,5 @@
 # zsh-aws-vault
-oh-my-zsh plugin for aws-vault
+oh-my-zsh plugin for [aws-vault](https://github.com/99designs/aws-vault)
 
 ## Installation
 
@@ -52,3 +52,11 @@ prompt_aws_vault() {
 Produces this segment in my prompt:
 
 ![screenshot of agnoster theme with aws-vault segment](https://i.imgur.com/BLE0QXg.png)
+
+#### Prompt Customization
+You can customize the prompt segment behavior by overriding these variables:
+
+| Variable Name                  | Default | Description                                                                 |
+|--------------------------------|---------|-----------------------------------------------------------------------------|
+| `AWS_VAULT_PL_CHAR`            | ☁       | The character to display when logged into an aws-vault profile              |
+| `AWS_VAULT_PL_DEFAULT_PROFILE` | default | Only show the character when logged into this profile, not the profile name |
