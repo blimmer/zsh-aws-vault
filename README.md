@@ -26,13 +26,16 @@ This plugin is pretty simple - it provides:
 
 ### Aliases
 
-| Alias | Expression               |
-|-------|--------------------------|
-| av    | aws-vault                |
-| ave   | aws-vault exec           |
-| avl   | aws-vault login          |
-| avs   | aws-vault server         |
-| avsh  | aws-vault exec $1 -- zsh |
+| Alias | Expression                                 |
+|-------|--------------------------------------------|
+| av    | aws-vault                                  |
+| ave   | aws-vault exec                             |
+| avl   | aws-vault login                            |
+| avll  | aws-vault login -s                         |
+| avli  | aws-vault login in private browsing window |
+| avs   | aws-vault server                           |
+| avsh  | aws-vault exec $1 -- zsh                   |
+| avp   | list aws config / role ARNs                |
 
 ### Prompt Segment
 
