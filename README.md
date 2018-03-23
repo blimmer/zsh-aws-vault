@@ -3,8 +3,9 @@ oh-my-zsh plugin for [aws-vault](https://github.com/99designs/aws-vault)
 
 ## Installation
 
-This plugin is intended to be used with
-[oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh).
+### [oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh)
+
+This plugin is intended to be used with oh-my-zsh
 
 1. `$ cd ~/.oh-my-zsh/custom/plugins` (you may have to create the folder)
 2. `$ git clone git@github.com:blimmer/zsh-aws-vault.git`
@@ -17,6 +18,11 @@ This plugin is intended to be used with
     zsh-aws-vault
   )
   ```
+
+### [zgen](https://github.com/tarjoilija/zgen)
+
+1. add `zgen load blimmer/zsh-aws-vault` to your '!saved/save' block
+1. `zgen update`
 
 ## Features
 
