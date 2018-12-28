@@ -69,3 +69,22 @@ You can customize the prompt segment behavior by overriding these variables:
 |--------------------------------|---------|-----------------------------------------------------------------------------|
 | `AWS_VAULT_PL_CHAR`            | ☁       | The character to display when logged into an aws-vault profile              |
 | `AWS_VAULT_PL_DEFAULT_PROFILE` | default | Only show the character when logged into this profile, not the profile name |
+
+### avli - login in private browsing window
+
+> This alias is currently only supported in OSX.
+
+This alias will open a new browser window after getting the temporary login URL for your profile.
+
+You can specify a specific browser to handle your login URL by setting `AWS_VAULT_PL_BROWSER` to the bundle name of the
+browser. By default, it will pick your default URL handler in the OS.
+
+#### Firefox (`org.mozilla.firefox`)
+
+When Firefox is detected, the command will create a new profile with the same name as your aws-vault profile, and open the
+session in that profile. This allows for multiple profiles to be open simultaneously.
+
+#### Chrome (`com.google.chrome`)
+
+When Chrome is detected, the command will open a new private browsing window with the session. This does not (currently)
+allow for multiple profiles to be open simultaneously.
