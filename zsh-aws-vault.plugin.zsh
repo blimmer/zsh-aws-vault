@@ -26,8 +26,8 @@ function avli() {
   login_url="$(avll $1)"
 
   if [ $? -ne 0 ]; then
-    echo "could not login"
-    return
+    echo "Could not login" >&2
+    return 1
   fi
 
   if _using_osx ; then
