@@ -1,4 +1,5 @@
 # zsh-aws-vault
+
 oh-my-zsh plugin for [aws-vault](https://github.com/99designs/aws-vault)
 
 ## Installation
@@ -27,8 +28,9 @@ This plugin is intended to be used with oh-my-zsh
 ## Features
 
 This plugin is pretty simple - it provides:
-  - aliases
-  - prompt segment
+
+- aliases
+- prompt segment
 
 ### Aliases
 
@@ -50,6 +52,7 @@ I use this for adding a segment into my custom
 [agnoster theme](https://github.com/agnoster/agnoster-zsh-theme/blob/master/agnoster.zsh-theme).
 
 For instance, this code:
+
 ```bash
 prompt_aws_vault() {
   local vault_segment
@@ -63,6 +66,7 @@ Produces this segment in my prompt:
 ![screenshot of agnoster theme with aws-vault segment](https://i.imgur.com/BLE0QXg.png)
 
 #### Prompt Customization
+
 You can customize the prompt segment behavior by overriding these variables:
 
 | Variable Name                  | Default | Description                                                                 |
@@ -77,14 +81,9 @@ You can customize the prompt segment behavior by overriding these variables:
 This alias will open a new browser window after getting the temporary login URL for your profile.
 
 You can specify a specific browser to handle your login URL by setting `AWS_VAULT_PL_BROWSER` to the bundle name of the
-browser. By default, it will pick your default URL handler in the OS.
+browser. By default, it will pick your default URL handler in MacOS. It supports the following browsers:
 
-#### Firefox (`org.mozilla.firefox`)
-
-When Firefox is detected, the command will create a new profile with the same name as your aws-vault profile, and open the
-session in that profile. This allows for multiple profiles to be open simultaneously.
-
-#### Chrome (`com.google.chrome`)
-
-When Chrome is detected, the command will open a new private browsing window with the session. This does not (currently)
-allow for multiple profiles to be open simultaneously.
+| `AWS_VAULT_PL_BROWSER` value | Browser | Description                                                                 |
+|------------------------------|---------|-----------------------------------------------------------------------------|
+| `org.mozilla.firefox`        | Firefox | Creates and/or opens a profile with the same name as your aws-vault profile This allows for multiple profiles to be open simultaneously. |
+| `com.google.chrome`          | Chrome  | Opens a new private browsing window for the session. This does not (currently) allow for multiple profiles to be open simultaneously. |

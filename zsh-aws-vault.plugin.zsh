@@ -93,15 +93,16 @@ function _using_osx() {
 
 function _find_browser() {
   if [ -n "$AWS_VAULT_PL_BROWSER" ]; then
+    # use the browser bundle specified
     echo "$AWS_VAULT_PL_BROWSER"
-  fi
-  if _using_osx ; then
+  elif _using_osx ; then
+    # Detect the browser in launchservices
     # https://stackoverflow.com/a/32465364/808678
     local prefs=~/Library/Preferences/com.apple.LaunchServices/com.apple.launchservices.secure.plist
     plutil -convert xml1 $prefs
     grep 'https' -b3 $prefs | awk 'NR==2 {split($2, arr, "[><]"); print arr[3]}';
     plutil -convert binary1 $prefs
   else
-    # TODO
+    # TODO - other platforms
   fi
 }
