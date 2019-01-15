@@ -3,6 +3,7 @@
 #--------------------------------------------------------------------#
 AWS_VAULT_PL_DEFAULT_PROFILE=${AWS_VAULT_PL_DEFAULT_PROFILE:-default}
 AWS_VAULT_PL_CHAR=${AWS_VAULT_PL_CHAR:-$'\u2601'} # "the cloud"
+AWS_VAULT_PL_BROWSER=${AWS_VAULT_PL_BROWSER:-''}
 
 #--------------------------------------------------------------------#
 # Aliases                                                            #
@@ -21,14 +22,22 @@ function avsh() {
 }
 
 function avli() {
-  local login_url="$(avll $1)"
+  local login_url
+  login_url="$(avll $1)"
+
+  if [ $? -ne 0 ]; then
+    echo "Could not login" >&2
+    return 1
+  fi
 
   if _using_osx ; then
     local browser="$(_find_browser)"
 
     case $browser in
       org.mozilla.firefox)
-        echo "${login_url}" | xargs /Applications/Firefox.app/Contents/MacOS/firefox --private-window
+        # Ensure a profile is created (can run idempotently) and launch it as a disowned process
+        /Applications/Firefox.app/Contents/MacOS/firefox --CreateProfile $1 2>/dev/null && \
+        /Applications/Firefox.app/Contents/MacOS/firefox --no-remote -P $1 "${login_url}" 2>/dev/null &!
         ;;
       com.google.chrome)
         echo "${login_url}" | xargs /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --args --incognito --new-window
@@ -83,13 +92,17 @@ function _using_osx() {
 }
 
 function _find_browser() {
-  if _using_osx ; then
+  if [ -n "$AWS_VAULT_PL_BROWSER" ]; then
+    # use the browser bundle specified
+    echo "$AWS_VAULT_PL_BROWSER"
+  elif _using_osx ; then
+    # Detect the browser in launchservices
     # https://stackoverflow.com/a/32465364/808678
     local prefs=~/Library/Preferences/com.apple.LaunchServices/com.apple.launchservices.secure.plist
     plutil -convert xml1 $prefs
     grep 'https' -b3 $prefs | awk 'NR==2 {split($2, arr, "[><]"); print arr[3]}';
     plutil -convert binary1 $prefs
   else
-    # TODO
+    # TODO - other platforms
   fi
 }
