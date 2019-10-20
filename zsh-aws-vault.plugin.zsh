@@ -44,7 +44,7 @@ function avli() {
         ;;
       *)
         # NOTE PRs welcome to add your browser
-        echo "Sorry, I don't know how to launch your default browser ($browser) :-("
+        open ${login_url}
         ;;
     esac
 
