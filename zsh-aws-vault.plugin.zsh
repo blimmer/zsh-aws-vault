@@ -49,14 +49,14 @@ function avli() {
     esac
   elif _using_linux ; then
     case $browser in
-       google-chrome)
-           # To launch Chrome with a new session, we create a nearly empty user dir
-           random=$(tr -cd '[:alnum:]' < /dev/urandom | fold -w30 | head -n1)
-           random_dir="/tmp/zsh-aws-vault-browser-$random"
-           mkdir $random_dir
-           touch "$random_dir/First Run" # Prevent Chrome prompting to become the default browser
-           google-chrome "${login_url}" --user-data-dir=$random_dir --start-maximized
-           ;;
+      google-chrome)
+        # To launch Chrome with a new session, we create a nearly empty user dir
+        random=$(tr -cd '[:alnum:]' < /dev/urandom | fold -w30 | head -n1)
+        random_dir="/tmp/zsh-aws-vault-browser-$random"
+        mkdir $random_dir
+        touch "$random_dir/First Run" # Prevent Chrome prompting to become the default browser
+        google-chrome "${login_url}" --user-data-dir=$random_dir --start-maximized
+        ;;
     esac
   else
     # NOTE this is untested - PRs welcome to improve it.
