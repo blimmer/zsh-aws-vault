@@ -30,9 +30,9 @@ function avli() {
     return 1
   fi
 
-  if _using_osx ; then
-    local browser="$(_find_browser)"
+  local browser="$(_find_browser)"
 
+  if _using_osx ; then
     case $browser in
       org.mozilla.firefox)
         # Ensure a profile is created (can run idempotently) and launch it as a disowned process
@@ -47,15 +47,17 @@ function avli() {
         echo "Sorry, I don't know how to launch your default browser ($browser) :-("
         ;;
     esac
-
-  elif (command -v "google-chrome" > /dev/null); then
-    # To launch Chrome with a new session, we create a nearly empty user dir
-    random=$(tr -cd '[:alnum:]' < /dev/urandom | fold -w30 | head -n1)
-    random_dir="/tmp/zsh-aws-vault-browser-$random"
-    mkdir $random_dir
-    touch "$random_dir/First Run" # Prevent Chrome prompting to become the default browser
-    google-chrome "${login_url}" --user-data-dir=$random_dir --start-maximized
-
+  elif _using_linux ; then
+    case $browser in
+       google-chrome)
+           # To launch Chrome with a new session, we create a nearly empty user dir
+           random=$(tr -cd '[:alnum:]' < /dev/urandom | fold -w30 | head -n1)
+           random_dir="/tmp/zsh-aws-vault-browser-$random"
+           mkdir $random_dir
+           touch "$random_dir/First Run" # Prevent Chrome prompting to become the default browser
+           google-chrome "${login_url}" --user-data-dir=$random_dir --start-maximized
+           ;;
+    esac
   else
     # NOTE this is untested - PRs welcome to improve it.
     echo "${login_url}" | xargs xdg-open
@@ -99,6 +101,10 @@ function _using_osx() {
   [[ $(uname) == "Darwin" ]]
 }
 
+function _using_linux() {
+  [[ $(uname) == "Linux" ]]
+}
+
 function _find_browser() {
   if [ -n "$AWS_VAULT_PL_BROWSER" ]; then
     # use the browser bundle specified
@@ -110,6 +116,9 @@ function _find_browser() {
     plutil -convert xml1 $prefs
     grep 'https' -b3 $prefs | awk 'NR==2 {split($2, arr, "[><]"); print arr[3]}';
     plutil -convert binary1 $prefs
+  elif _using_linux ; then
+    # Always Chrome for now
+    echo "google-chrome"
   else
     # TODO - other platforms
   fi
