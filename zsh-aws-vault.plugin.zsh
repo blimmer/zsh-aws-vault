@@ -50,12 +50,11 @@ function avli() {
   elif _using_linux ; then
     case $browser in
       google-chrome)
-        # To launch Chrome with a new session, we create a nearly empty user dir
-        random=$(tr -cd '[:alnum:]' < /dev/urandom | fold -w30 | head -n1)
-        random_dir="/tmp/zsh-aws-vault-browser-$random"
-        mkdir $random_dir
-        touch "$random_dir/First Run" # Prevent Chrome prompting to become the default browser
-        google-chrome "${login_url}" --user-data-dir=$random_dir --start-maximized
+        echo "${login_url}" | xargs -t nohup google-chrome %U --no-first-run --new-window --start-maximized --disk-cache-dir=$(mktemp -d /tmp/chrome.XXXXXX) --user-data-dir=$(mktemp -d /tmp/chrome.XXXXXX) > /dev/null 2>&1 &
+        ;;
+      *)
+        # NOTE PRs welcome to add your browser
+        echo "Sorry, I don't know how to launch your default browser ($browser) :-("
         ;;
     esac
   else
@@ -118,6 +117,7 @@ function _find_browser() {
     plutil -convert binary1 $prefs
   elif _using_linux ; then
     # Always Chrome for now
+    # NOTE PRs welcome to add your browser
     echo "google-chrome"
   else
     # TODO - other platforms
