@@ -4,7 +4,12 @@
 AWS_VAULT_PL_DEFAULT_PROFILE=${AWS_VAULT_PL_DEFAULT_PROFILE:-default}
 AWS_VAULT_PL_CHAR=${AWS_VAULT_PL_CHAR:-$'\u2601'} # "the cloud"
 AWS_VAULT_PL_BROWSER=${AWS_VAULT_PL_BROWSER:-''}
+<<<<<<< HEAD
 AWS_VAULT_PL_MFA=${AWS_VAULT_PL_MFA:-''}
+||||||| 2d11c48
+=======
+AWS_VAULT_PL_2FA=${AWS_VAULT_PL_2FA:-''}
+>>>>>>> 92369cc8875627d23176f9fb8e500ebbb6bcfd3d
 
 #--------------------------------------------------------------------#
 # Aliases                                                            #
