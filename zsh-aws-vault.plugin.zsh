@@ -65,6 +65,9 @@ function avli() {
       com.google.chrome)
         echo "${login_url}" | xargs -t nohup /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome %U --no-first-run --new-window --disk-cache-dir=$(mktemp -d /tmp/chrome.XXXXXX) --user-data-dir=$(mktemp -d /tmp/chrome.XXXXXX) > /dev/null 2>&1 &
         ;;
+      com.brave.Browser)
+        echo "${login_url}" | xargs -t nohup /Applications/Brave\ Browser.app/Contents/MacOS/Brave\ Browser %U --no-first-run --new-window --disk-cache-dir=$(mktemp -d /tmp/chrome.XXXXXX) --user-data-dir=$(mktemp -d /tmp/chrome.XXXXXX) > /dev/null 2>&1 &
+        ;;
       *)
         # NOTE PRs welcome to add your browser
         echo "Sorry, I don't know how to launch your default browser ($browser) :-("
@@ -74,6 +77,9 @@ function avli() {
     case $browser in
       google-chrome)
         echo "${login_url}" | xargs -t nohup google-chrome %U --no-first-run --new-window --start-maximized --disk-cache-dir=$(mktemp -d /tmp/chrome.XXXXXX) --user-data-dir=$(mktemp -d /tmp/chrome.XXXXXX) > /dev/null 2>&1 &
+        ;;
+      brave-browser)
+        echo "${login_url}" | xargs -t nohup brave-browser %U --no-first-run --new-window --start-maximized --disk-cache-dir=$(mktemp -d /tmp/chrome.XXXXXX) --user-data-dir=$(mktemp -d /tmp/chrome.XXXXXX) > /dev/null 2>&1 &
         ;;
       *)
         # NOTE PRs welcome to add your browser
@@ -139,9 +145,8 @@ function _find_browser() {
     grep 'https' -b3 $prefs | awk 'NR==2 {split($2, arr, "[><]"); print arr[3]}';
     plutil -convert binary1 $prefs
   elif _using_linux ; then
-    # Always Chrome for now
-    # NOTE PRs welcome to add your browser
-    echo "google-chrome"
+    # Fetch default browser from alternatives
+    update-alternatives --list x-www-browser | head -1
   else
     # TODO - other platforms
   fi
