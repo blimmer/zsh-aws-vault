@@ -4,6 +4,7 @@
 AWS_VAULT_PL_DEFAULT_PROFILE=${AWS_VAULT_PL_DEFAULT_PROFILE:-default}
 AWS_VAULT_PL_CHAR=${AWS_VAULT_PL_CHAR:-$'\u2601'} # "the cloud"
 AWS_VAULT_PL_BROWSER=${AWS_VAULT_PL_BROWSER:-''}
+AWS_VAULT_PL_2FA=${AWS_VAULT_PL_2FA:-''}
 
 #--------------------------------------------------------------------#
 # Aliases                                                            #
@@ -18,12 +19,34 @@ alias avll='avl -s'
 # Convenience Functions                                              #
 #--------------------------------------------------------------------#
 function avsh() {
-  aws-vault exec $1 -- zsh
+  case ${AWS_VAULT_PL_2FA} in
+    inline)
+      aws-vault exec -t $2 $1 -- zsh
+      ;;
+    yubi)
+      totp=${2:$1}
+      aws-vault exec -t $(ykman oath code --single $totp) $1 -- zsh
+      ;;
+    *)
+      aws-vault exec $1 -- zsh
+      ;;
+  esac
 }
 
 function avli() {
   local login_url
-  login_url="$(avll $1)"
+  case ${AWS_VAULT_PL_2FA} in
+    inline)
+      login_url="$(avll -t $2 $1)"
+      ;;
+    yubi)
+      totp=${2:-$1}
+      login_url="$(avll -t $(ykman oath code --single $totp) $1)"
+      ;;
+    *)
+      login_url="$(avll $1)"
+      ;;
+  esac
 
   if [ $? -ne 0 ]; then
     echo "Could not login" >&2
