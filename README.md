@@ -87,3 +87,12 @@ browser. By default, it will pick your default URL handler in MacOS. It supports
 |------------------------------|---------|-----------------------------------------------------------------------------|
 | `org.mozilla.firefox`        | Firefox | Creates and/or opens a profile with the same name as your aws-vault profile. This allows for multiple profiles to be open simultaneously. |
 | `com.google.chrome`          | Chrome  | Opens a new private browsing window for the session. This allows for multiple profiles to be open simultaneously. |
+
+#### Multi Factor Authentication (MFA)
+
+You can override the default MFA prompt by adding the `AWS_VAULT_PL_MFA` environment variable.
+
+| `AWS_VAULT_PL_MFA` value | Description                                                                                                                                                                 | Example                                                                                                    |
+|--------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
+| inline                   | Enter your MFA token as an additional argument to the command.                                                                                                              | `avsh default 123456`<br>`avli default 123456`                                                             |
+| yubikey                  | Generate an MFA token from your Yubikey. See the [docs](https://github.com/99designs/aws-vault/blob/master/USAGE.md#using-a-yubikey-as-a-virtual-mfa) for more information. | `avsh default`<br>`avsh default my-yubikey-profile`<br>`avli default`<br>`avli default my-yubikey-profile` |
