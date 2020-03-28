@@ -24,7 +24,7 @@ function avsh() {
       aws-vault exec -t $2 $1 -- zsh
       ;;
     yubikey)
-      totp=${2:$1}
+      totp=${2:-$1}
       aws-vault exec -t $(ykman oath code --single $totp) $1 -- zsh
       ;;
     *)
