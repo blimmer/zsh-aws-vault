@@ -145,8 +145,9 @@ function _find_browser() {
     grep 'https' -b3 $prefs | awk 'NR==2 {split($2, arr, "[><]"); print arr[3]}';
     plutil -convert binary1 $prefs
   elif _using_linux ; then
-    # Fetch default browser from alternatives
-    # update-alternatives --list x-www-browser | head -1
+    # Always Chrome for now
+    # NOTE PRs welcome to add your browser
+    echo "google-chrome"
   else
     # TODO - other platforms
   fi
