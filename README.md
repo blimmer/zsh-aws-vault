@@ -86,6 +86,7 @@ browser. By default, it will pick your default URL handler in MacOS. It supports
 | `AWS_VAULT_PL_BROWSER` value | Browser | Description                                                                 |
 |------------------------------|---------|-----------------------------------------------------------------------------|
 | `org.mozilla.firefox`        | Firefox | Creates and/or opens a profile with the same name as your aws-vault profile. This allows for multiple profiles to be open simultaneously. |
+| `org.mozilla.firefoxdeveloperedition`  | Firefox Developer Edition | Creates and/or opens a profile with the same name as your aws-vault profile. This allows for multiple profiles to be open simultaneously. |
 | `com.google.chrome`          | Chrome  | Opens a new private browsing window for the session. This allows for multiple profiles to be open simultaneously. |
 | `com.brave.Browser`          | Brave   | Opens a new private browsing window for the session. This allows for multiple profiles to be open simultaneously. |
 

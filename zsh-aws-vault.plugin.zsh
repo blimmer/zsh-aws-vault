@@ -62,6 +62,10 @@ function avli() {
         /Applications/Firefox.app/Contents/MacOS/firefox --CreateProfile $1 2>/dev/null && \
         /Applications/Firefox.app/Contents/MacOS/firefox --no-remote -P $1 "${login_url}" 2>/dev/null &!
         ;;
+      org.mozilla.firefoxdeveloperedition)
+        /Applications/Firefox\ Developer\ Edition.app/Contents/MacOS/firefox --CreateProfile $1 2>/dev/null && \
+        /Applications/Firefox\ Developer\ Edition.app/Contents/MacOS/firefox --no-remote -P $1 "${login_url}" 2>/dev/null &!
+        ;;
       com.google.chrome)
         echo "${login_url}" | xargs -t nohup /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome %U --no-first-run --new-window --disk-cache-dir=$(mktemp -d /tmp/chrome.XXXXXX) --user-data-dir=$(mktemp -d /tmp/chrome.XXXXXX) > /dev/null 2>&1 &
         ;;
