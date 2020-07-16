@@ -11,40 +11,63 @@ AWS_VAULT_PL_MFA=${AWS_VAULT_PL_MFA:-''}
 #--------------------------------------------------------------------#
 alias av='aws-vault'
 alias ave='aws-vault exec'
-alias avl='aws-vault login'
 alias avs='aws-vault server'
-alias avll='avl -s'
 
 #--------------------------------------------------------------------#
 # Convenience Functions                                              #
 #--------------------------------------------------------------------#
+function avl() {
+  local aws_profile=${1:-$AWS_VAULT}
+  aws-vault login $aws_profile
+}
+
+function avll() {
+  local aws_profile=${1:-$AWS_VAULT}
+  aws-vault login -s $aws_profile
+}
+
+function aven() {
+  local aws_profile=${1:-$AWS_VAULT}
+  unset AWS_ACCESS_KEY_ID
+  unset AWS_DEFAULT_REGION
+  unset AWS_REGION
+  unset AWS_SECRET_ACCESS_KEY
+  unset AWS_SECURITY_TOKEN
+  unset AWS_SESSION_EXPIRATION
+  unset AWS_SESSION_TOKEN
+  unset AWS_VAULT
+  export $(aws-vault exec $aws_profile -- env | grep AWS)
+}
+
 function avsh() {
+  local aws_profile=${1:-$AWS_VAULT}
   case ${AWS_VAULT_PL_MFA} in
     inline)
-      aws-vault exec -t $2 $1 -- zsh
+      aws-vault exec -t $2 $aws_profile -- zsh
       ;;
     yubikey)
       totp=${2:-$1}
-      aws-vault exec -t $(ykman oath code --single $totp) $1 -- zsh
+      aws-vault exec -t $(ykman oath code --single $totp) $aws_profile -- zsh
       ;;
     *)
-      aws-vault exec $1 -- zsh
+      aws-vault exec $aws_profile -- zsh
       ;;
   esac
 }
 
 function avli() {
   local login_url
+  local aws_profile=${1:-$AWS_VAULT}
   case ${AWS_VAULT_PL_MFA} in
     inline)
-      login_url="$(avll -t $2 $1)"
+      login_url="$(avll -t $2 $aws_profile)"
       ;;
     yubikey)
-      totp=${2:-$1}
-      login_url="$(avll -t $(ykman oath code --single $totp) $1)"
+      totp=${2:-$aws_profile}
+      login_url="$(avll -t $(ykman oath code --single $totp) $aws_profile)"
       ;;
     *)
-      login_url="$(avll $1)"
+      login_url="$(avll $aws_profile)"
       ;;
   esac
 
