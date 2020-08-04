@@ -1,4 +1,4 @@
-#compdef avl avll avli aven
+#compdef avl avll avli ave avsh aven
 function _av_completion() {
   _arguments "1: :($(grep '\[profile' ~/.aws/config | sed -n 's/\[profile \(.*\).*\]/\1/p' | sort))"
 }

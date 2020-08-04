@@ -10,7 +10,6 @@ AWS_VAULT_PL_MFA=${AWS_VAULT_PL_MFA:-''}
 # Aliases                                                            #
 #--------------------------------------------------------------------#
 alias av='aws-vault'
-alias ave='aws-vault exec'
 alias avs='aws-vault server'
 
 #--------------------------------------------------------------------#
@@ -37,6 +36,10 @@ function aven() {
   unset AWS_SESSION_TOKEN
   unset AWS_VAULT
   export $(aws-vault exec $aws_profile -- env | grep AWS)
+}
+
+function ave() {
+  aws-vault exec $@
 }
 
 function avsh() {
