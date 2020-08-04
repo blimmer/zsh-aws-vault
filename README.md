@@ -34,16 +34,44 @@ This plugin is pretty simple - it provides:
 
 ### Aliases
 
-| Alias | Expression                                 |
-|-------|--------------------------------------------|
-| av    | aws-vault                                  |
-| ave   | aws-vault exec                             |
-| avl   | aws-vault login                            |
-| avll  | aws-vault login -s                         |
-| avli  | aws-vault login in private browsing window |
-| avs   | aws-vault server                           |
-| avsh  | aws-vault exec $1 -- zsh                   |
-| avp   | list aws config / role ARNs                |
+| Alias          | Expression                                 |
+|----------------|--------------------------------------------|
+| av             | aws-vault                                  |
+| ave            | aws-vault exec                             |
+| avl            | aws-vault login                            |
+| avll           | aws-vault login -s                         |
+| [avli](#avli)  | aws-vault login in private browsing window |
+| avs            | aws-vault server                           |
+| [avsh](#avsh)  | aws-vault exec $1 -- zsh                   |
+| avp            | list aws config / role ARNs                |
+
+### `avli`
+
+Login in Private Browsing Window
+
+> This alias is currently only supported in OSX and Linux.
+
+This alias will open a new browser window after getting the temporary login URL for your profile.
+
+You can specify a specific browser to handle your login URL by setting `AWS_VAULT_PL_BROWSER` to the bundle name of the
+browser. By default, it will pick your default URL handler in MacOS. It supports the following browsers:
+
+| `AWS_VAULT_PL_BROWSER` value | Browser | Description                                                                 |
+|------------------------------|---------|-----------------------------------------------------------------------------|
+| `org.mozilla.firefox`        | Firefox | Creates and/or opens a profile with the same name as your aws-vault profile. This allows for multiple profiles to be open simultaneously. |
+| `org.mozilla.firefoxdeveloperedition`  | Firefox Developer Edition | Creates and/or opens a profile with the same name as your aws-vault profile. This allows for multiple profiles to be open simultaneously. |
+| `com.google.chrome`          | Chrome  | Opens a new private browsing window for the session. This allows for multiple profiles to be open simultaneously. |
+| `com.brave.Browser`          | Brave   | Opens a new private browsing window for the session. This allows for multiple profiles to be open simultaneously. |
+
+### `avsh`
+
+Create a shell for a given profile.
+
+For example, place the relevant `AWS` environment variables for your default profile by running:
+
+```bash
+avsh default
+```
 
 ### Prompt Segment
 
@@ -74,23 +102,7 @@ You can customize the prompt segment behavior by overriding these variables:
 | `AWS_VAULT_PL_CHAR`            | ☁       | The character to display when logged into an aws-vault profile              |
 | `AWS_VAULT_PL_DEFAULT_PROFILE` | default | Only show the character when logged into this profile, not the profile name |
 
-### avli - login in private browsing window
-
-> This alias is currently only supported in OSX.
-
-This alias will open a new browser window after getting the temporary login URL for your profile.
-
-You can specify a specific browser to handle your login URL by setting `AWS_VAULT_PL_BROWSER` to the bundle name of the
-browser. By default, it will pick your default URL handler in MacOS. It supports the following browsers:
-
-| `AWS_VAULT_PL_BROWSER` value | Browser | Description                                                                 |
-|------------------------------|---------|-----------------------------------------------------------------------------|
-| `org.mozilla.firefox`        | Firefox | Creates and/or opens a profile with the same name as your aws-vault profile. This allows for multiple profiles to be open simultaneously. |
-| `org.mozilla.firefoxdeveloperedition`  | Firefox Developer Edition | Creates and/or opens a profile with the same name as your aws-vault profile. This allows for multiple profiles to be open simultaneously. |
-| `com.google.chrome`          | Chrome  | Opens a new private browsing window for the session. This allows for multiple profiles to be open simultaneously. |
-| `com.brave.Browser`          | Brave   | Opens a new private browsing window for the session. This allows for multiple profiles to be open simultaneously. |
-
-#### Multi Factor Authentication (MFA)
+### Multi Factor Authentication (MFA)
 
 You can override the default MFA prompt by adding the `AWS_VAULT_PL_MFA` environment variable.
 
