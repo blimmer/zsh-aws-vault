@@ -110,3 +110,11 @@ You can override the default MFA prompt by adding the `AWS_VAULT_PL_MFA` environ
 |--------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
 | inline                   | Enter your MFA token as an additional argument to the command.                                                                                                              | `avsh default 123456`<br>`avli default 123456`                                                             |
 | yubikey                  | Generate an MFA token from your Yubikey. See the [docs](https://github.com/99designs/aws-vault/blob/master/USAGE.md#using-a-yubikey-as-a-virtual-mfa) for more information. | `avsh default`<br>`avsh default my-yubikey-profile`<br>`avli default`<br>`avli default my-yubikey-profile` |
+
+#### Secret Backend Support
+
+You can override the default secret backend by adding the 'AWS_VAULT_PL_BACKEND' environment variable
+
+| Variable Name                  | Default  | Description                                                                 |
+|--------------------------------|----------|-----------------------------------------------------------------------------|
+| `AWS_VAULT_PL_BACKEND`         | keychain | The secret backend to use                                                   |
