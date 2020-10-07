@@ -5,39 +5,40 @@ AWS_VAULT_PL_DEFAULT_PROFILE=${AWS_VAULT_PL_DEFAULT_PROFILE:-default}
 AWS_VAULT_PL_CHAR=${AWS_VAULT_PL_CHAR:-$'\u2601'} # "the cloud"
 AWS_VAULT_PL_BROWSER=${AWS_VAULT_PL_BROWSER:-''}
 AWS_VAULT_PL_MFA=${AWS_VAULT_PL_MFA:-''}
+AWS_VAULT_PL_BACKEND=${AWS_VAULT_PL_BACKEND:-'keychain'}
 
 #--------------------------------------------------------------------#
 # Aliases                                                            #
 #--------------------------------------------------------------------#
-alias av='aws-vault'
-alias avs='aws-vault server'
+alias av='aws-vault --backend=${AWS_VAULT_PL_BACKEND}'
+alias avs='aws-vault --backend=${AWS_VAULT_PL_BACKEND} server'
 
 #--------------------------------------------------------------------#
 # Convenience Functions                                              #
 #--------------------------------------------------------------------#
 function avl() {
-  aws-vault login $@
+  aws-vault --backend=${AWS_VAULT_PL_BACKEND} login $@
 }
 
 function avll() {
-  aws-vault login -s $@
+  aws-vault --backend=${AWS_VAULT_PL_BACKEND} login -s $@
 }
 
 function ave() {
-  aws-vault exec $@
+  aws-vault --backend=${AWS_VAULT_PL_BACKEND} exec $@
 }
 
 function avsh() {
   case ${AWS_VAULT_PL_MFA} in
     inline)
-      aws-vault exec -t $2 $1 -- zsh
+      aws-vault --backend=${AWS_VAULT_PL_BACKEND} exec -t $2 $1 -- zsh
       ;;
     yubikey)
       totp=${2:-$1}
-      aws-vault exec -t $(ykman oath code --single $totp) $1 -- zsh
+      aws-vault --backend=${AWS_VAULT_PL_BACKEND} exec -t $(ykman oath code --single $totp) $1 -- zsh
       ;;
     *)
-      aws-vault exec $1 -- zsh
+      aws-vault --backend=${AWS_VAULT_PL_BACKEND} exec $1 -- zsh
       ;;
   esac
 }
