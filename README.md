@@ -93,6 +93,12 @@ Produces this segment in my prompt:
 
 ![screenshot of agnoster theme with aws-vault segment](https://i.imgur.com/BLE0QXg.png)
 
+The instructions to customize the prompt vary based on the [theme](https://github.com/ohmyzsh/ohmyzsh/wiki/Themes) you
+use. In some cases, you'll need to create a copy of the theme file and edit it to include the prompt segment. You can
+check out my
+[custom agnoster theme](https://github.com/blimmer/dotfiles/blob/fa46a6818dcd92c2b7c1a578b32166542c4febca/oh-my-zsh-custom/themes/agnoster.zsh-theme#L232)
+to see how I updated the prompt.
+
 #### Prompt Customization
 
 You can customize the prompt segment behavior by overriding these variables:
