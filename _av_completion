@@ -1,5 +1,11 @@
-#compdef avl avll avli ave avsh
+#compdef avli avsh
+function _vault_profiles() {
+    local -a profiles
+    local IFS=$'\n'
+    profiles=($(aws-vault list --profiles))
+    _describe 'PROFILE' profiles
+}
 function _av_completion() {
-  _arguments "1: :($(grep '\[profile' ~/.aws/config | sed -n 's/\[profile \(.*\).*\]/\1/p' | sort))"
+  _arguments "1:PROFILE:_vault_profiles"
 }
 _av_completion "$@"

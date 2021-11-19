@@ -1,0 +1,106 @@
+#compdef aws-vault
+
+local context state state_desc line
+local curcontext="$curcontext"
+
+_vault_cmds() {
+    local -a commands
+    commands=(
+        'help:Show help'
+        'add:Adds credentials to the secure keystore'
+        'list:List profiles, along with their credentials and sessions'
+        'rotate:Rotates credentials'
+        'exec:Executes a command with AWS credentials in the environment'
+        'clear:Clear temporary credentials from the secure keystore'
+        'remove:Removes credentials from the secure keystore'
+        'login:Generate a login link for the AWS Console'
+    )
+    _describe 'command' commands
+}
+
+_vault_profiles() {
+    local -a profiles
+    IFS=$'\n'
+    profiles=($(aws-vault list --profiles))
+    _describe 'PROFILE' profiles
+}
+
+_vault_credentials() {
+    local -a creds
+    IFS=$'\n'
+    creds=($(aws-vault list --credentials))
+    _describe 'CREDENTIALS' creds
+}
+
+_arguments -C \
+    '1:COMMAND:->cmds' \
+    '*::ARG:->args'
+
+global_flags=(
+  '--help[Show context-sensitive help]'
+  '--version[Show application version]'
+  '--debug[Show debugging output]'
+)
+flags=()
+case "$state" in
+    cmds)
+      _arguments ${global_flags} '1:COMMAND:_vault_cmds'
+    ;;
+    args)
+        case $words[1] in
+            help)
+              _arguments '1:COMMANDS:_vault_cmds'
+              ;;
+
+            add)
+              flags=(
+                --env'[Read the credentials from the environment]'
+                --add-config"[Add a profile to ~/.aws/config if one doesn't exist]"
+              )
+              _arguments ${flags[@]} '1:PROFILE:_vault_profiles'
+            ;;
+            list)
+              flags=(
+                --profiles'[Show only the profile names]'
+                --sessions'[Show only the session names]'
+                --credentials'[Show only the profiles with stored credential]'
+              )
+              _arguments "${flags[@]}"
+            ;;
+            rotate)
+              flags=(
+                --no-session'[Use master credentials, no session or role used]'
+              )
+                _arguments ${flags[@]} '1:CREDENTIALS:_vault_credentials'
+            ;;
+            exec)
+              flags=(
+                {-d,--duration}='[Duration of the temporary or assume-role session]'
+                {-n,--no-session}'[Skip creating STS session with GetSessionToken]'
+                --region='[The AWS region]'
+                {-t,--mfa-token}='[The MFA token to use]'
+                {-j,--json}'[Output credentials in JSON that can be used by credential_process]'
+                {-s,--server,--ec2-server}'[Run a EC2 metadata server in the background for credentials]'
+                --ecs-server'[Run a ECS credential server in the background for credentials]'
+              )
+              _arguments ${flags[@]} '1:PROFILE:_vault_profiles'
+            ;;
+            clear)
+              _arguments '1:CREDENTIALS:_vault_credentials'
+            ;;
+            remove)
+              _arguments '1:CREDENTIALS:_vault_credentials'
+            ;;
+            login)
+              flags=(
+                {-d,--duration}='[Duration of the assume-role or federated session]'
+                {-n,--no-session}'[Skip creating STS session with GetSessionToken]'
+                {-t,--mfa-token}='[The MFA token to use]'
+                --path='[The AWS service you would like access]'
+                {-s,--stdout}'[Print login URL to stdout instead of opening in default browser]'
+              )
+              _arguments ${flags[@]} '1:PROFILE:_vault_profiles'
+            ;;
+        esac
+    ;;
+esac
