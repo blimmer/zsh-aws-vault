@@ -11,22 +11,13 @@ AWS_VAULT_PL_MFA=${AWS_VAULT_PL_MFA:-''}
 #--------------------------------------------------------------------#
 alias av='aws-vault'
 alias avs='aws-vault server'
+alias avl='aws-vault login'
+alias avll='aws-vault login -s'
+alias ave='aws-vault exec'
 
 #--------------------------------------------------------------------#
 # Convenience Functions                                              #
 #--------------------------------------------------------------------#
-function avl() {
-  aws-vault login $@
-}
-
-function avll() {
-  aws-vault login -s $@
-}
-
-function ave() {
-  aws-vault exec $@
-}
-
 function avsh() {
   case ${AWS_VAULT_PL_MFA} in
     inline)
