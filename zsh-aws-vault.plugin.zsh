@@ -24,8 +24,7 @@ function avsh() {
       aws-vault exec -t $2 $1 -- zsh
       ;;
     yubikey)
-      totp=${2:-$1}
-      aws-vault exec -t $(ykman oath code --single $totp) $1 -- zsh
+      aws-vault exec --prompt ykman $1 -- zsh
       ;;
     *)
       aws-vault exec $1 -- zsh
@@ -40,8 +39,7 @@ function avli() {
       login_url="$(avll -t $2 $1)"
       ;;
     yubikey)
-      totp=${2:-$1}
-      login_url="$(avll -t $(ykman oath code --single $totp) $1)"
+      login_url="$(avll --prompt ykman $1)"
       ;;
     *)
       login_url="$(avll $1)"
