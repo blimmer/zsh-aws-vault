@@ -11,13 +11,52 @@ AWS_VAULT_PL_MFA=${AWS_VAULT_PL_MFA:-''}
 #--------------------------------------------------------------------#
 alias av='aws-vault'
 alias avs='aws-vault server'
-alias avl='aws-vault login'
-alias avll='aws-vault login -s'
-alias ave='aws-vault exec'
 
 #--------------------------------------------------------------------#
 # Convenience Functions                                              #
 #--------------------------------------------------------------------#
+function avl() {
+  case ${AWS_VAULT_PL_MFA} in
+    inline)
+      aws-vault login -t $2 $1
+      ;;
+    yubikey)
+      aws-vault login --prompt ykman $1
+      ;;
+    *)
+      aws-vault login $1
+      ;;
+  esac
+}
+
+function avll() {
+  case ${AWS_VAULT_PL_MFA} in
+    inline)
+      aws-vault login -s -t $2 $1
+      ;;
+    yubikey)
+      aws-vault login -s --prompt ykman $1
+      ;;
+    *)
+      aws-vault login -s $1
+      ;;
+  esac
+}
+
+function ave() {
+  case ${AWS_VAULT_PL_MFA} in
+    inline)
+      aws-vault exec -t $2 $1
+      ;;
+    yubikey)
+      aws-vault exec --prompt ykman $1
+      ;;
+    *)
+      aws-vault exec $1
+      ;;
+  esac
+}
+
 function avsh() {
   case ${AWS_VAULT_PL_MFA} in
     inline)
@@ -36,13 +75,13 @@ function avli() {
   local login_url
   case ${AWS_VAULT_PL_MFA} in
     inline)
-      login_url="$(avll -t $2 $1)"
+      login_url="$(aws-vault login -s -t $2 $1)"
       ;;
     yubikey)
-      login_url="$(avll --prompt ykman $1)"
+      login_url="$(aws-vault login -s --prompt ykman $1)"
       ;;
     *)
-      login_url="$(avll $1)"
+      login_url="$(aws-vault login -s $1)"
       ;;
   esac
 
