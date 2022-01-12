@@ -45,14 +45,11 @@ function avll() {
 
 function ave() {
   case ${AWS_VAULT_PL_MFA} in
-    inline)
-      aws-vault exec -t $2 $1
-      ;;
     yubikey)
-      aws-vault exec --prompt ykman $1
+      aws-vault exec --prompt ykman "$@"
       ;;
     *)
-      aws-vault exec $1
+      aws-vault exec "$@"
       ;;
   esac
 }
