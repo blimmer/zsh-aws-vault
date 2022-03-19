@@ -9,7 +9,7 @@ oh-my-zsh plugin for [aws-vault](https://github.com/99designs/aws-vault)
 This plugin is intended to be used with oh-my-zsh
 
 1. `$ cd ~/.oh-my-zsh/custom/plugins` (you may have to create the folder)
-2. `$ git clone git@github.com:blimmer/zsh-aws-vault.git`
+2. `$ git clone https://github.com/blimmer/zsh-aws-vault.git`
 3. In your .zshrc, add `zsh-aws-vault` to your oh-my-zsh plugins:
 
   ```bash
