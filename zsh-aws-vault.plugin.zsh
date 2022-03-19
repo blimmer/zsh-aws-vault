@@ -76,14 +76,16 @@ function avli() {
         ;;
     esac
   elif _using_linux ; then
+    AVLI_TMP_PROFILE=$(mktemp --tmpdir -d avli.XXXXXX)
     case $browser in
-      google-chrome)
-        echo "${login_url}" | xargs -t nohup google-chrome %U --no-first-run --new-window --start-maximized --disk-cache-dir=$(mktemp -d /tmp/chrome.XXXXXX) --user-data-dir=$(mktemp -d /tmp/chrome.XXXXXX) > /dev/null 2>&1 &
+      *"chrom"*|*"brave"*)
+        (${browser} --no-first-run --new-window --disk-cache-dir="${AVLI_TMP_PROFILE}" --user-data-dir="${AVLI_TMP_PROFILE}" "${login_url}" 2>/dev/null && rm -rf "${AVLI_TMP_PROFILE}") &!
         ;;
-      brave-browser)
-        echo "${login_url}" | xargs -t nohup brave-browser %U --no-first-run --new-window --start-maximized --disk-cache-dir=$(mktemp -d /tmp/brave.XXXXXX) --user-data-dir=$(mktemp -d /tmp/brave.XXXXXX) > /dev/null 2>&1 &
+      *"firefox"*)
+        (${browser} -profile "${AVLI_TMP_PROFILE}" -no-remote -new-instance "${login_url}" 2>/dev/null && rm -rf "${AVLI_TMP_PROFILE}") &!
         ;;
       *)
+        rm -rf "${AVLI_TMP_PROFILE}"
         # NOTE PRs welcome to add your browser
         echo "Sorry, I don't know how to launch your default browser ($browser) :-("
         ;;
@@ -136,9 +138,11 @@ function _using_linux() {
 }
 
 function _find_browser() {
-  if [ -n "$AWS_VAULT_PL_BROWSER" ]; then
+  if [ -n "${AWS_VAULT_PL_BROWSER}" ]; then
     # use the browser bundle specified
-    echo "$AWS_VAULT_PL_BROWSER"
+    echo "${AWS_VAULT_PL_BROWSER}"
+  elif [ -n "${BROWSER}" ]; then
+      echo "${BROWSER}"
   elif _using_osx ; then
     # Detect the browser in launchservices
     # https://stackoverflow.com/a/32465364/808678
@@ -147,9 +151,8 @@ function _find_browser() {
     grep 'https' -b3 $prefs | awk 'NR==2 {split($2, arr, "[><]"); print arr[3]}';
     plutil -convert binary1 $prefs
   elif _using_linux ; then
-    # Always Chrome for now
-    # NOTE PRs welcome to add your browser
-    echo "google-chrome"
+    # This is bad but it's marginally better than hardcoding google-chrome
+    xdg-settings get default-web-browser | cut -d'.' -f1
   else
     # TODO - other platforms
   fi
