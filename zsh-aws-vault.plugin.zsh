@@ -21,13 +21,13 @@ alias ave='aws-vault exec'
 function avsh() {
   case ${AWS_VAULT_PL_MFA} in
     inline)
-      aws-vault exec -t $2 $1 -- zsh
+      aws-vault exec -t "$2" "$1" "${@:3}" -- zsh
       ;;
     yubikey)
-      aws-vault exec --prompt ykman $1 -- zsh
+      aws-vault exec --prompt ykman "$@" -- zsh
       ;;
     *)
-      aws-vault exec $1 -- zsh
+      aws-vault exec "$@" -- zsh
       ;;
   esac
 }
@@ -36,13 +36,13 @@ function avli() {
   local login_url
   case ${AWS_VAULT_PL_MFA} in
     inline)
-      login_url="$(avll -t $2 $1)"
+      login_url="$(avll -t $2 $1 ${@:3})"
       ;;
     yubikey)
-      login_url="$(avll --prompt ykman $1)"
+      login_url="$(avll --prompt ykman $@)"
       ;;
     *)
-      login_url="$(avll $1)"
+      login_url="$(avll $@)"
       ;;
   esac
 
