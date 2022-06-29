@@ -59,17 +59,17 @@ function avli() {
       org.mozilla.firefox)
         # Ensure a profile is created (can run idempotently) and launch it as a disowned process
         /Applications/Firefox.app/Contents/MacOS/firefox --CreateProfile $1 2>/dev/null && \
-        /Applications/Firefox.app/Contents/MacOS/firefox "$AWS_VAULT_PL_BROWSER_LAUNCH_OPTS" --no-remote -P $1 "${login_url}" 2>/dev/null &!
+        /Applications/Firefox.app/Contents/MacOS/firefox $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-remote -P $1 "${login_url}" 2>/dev/null &!
         ;;
       org.mozilla.firefoxdeveloperedition)
         /Applications/Firefox\ Developer\ Edition.app/Contents/MacOS/firefox --CreateProfile $1 2>/dev/null && \
-        /Applications/Firefox\ Developer\ Edition.app/Contents/MacOS/firefox "$AWS_VAULT_PL_BROWSER_LAUNCH_OPTS" --no-remote -P $1 "${login_url}" 2>/dev/null &!
+        /Applications/Firefox\ Developer\ Edition.app/Contents/MacOS/firefox $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-remote -P $1 "${login_url}" 2>/dev/null &!
         ;;
       com.google.chrome)
-        echo "${login_url}" | xargs -t nohup /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome %U "$AWS_VAULT_PL_BROWSER_LAUNCH_OPTS" --no-first-run --new-window --disk-cache-dir=$(mktemp -d /tmp/chrome.XXXXXX) --user-data-dir=$(mktemp -d /tmp/chrome.XXXXXX) > /dev/null 2>&1 &
+        echo "${login_url}" | xargs -t nohup /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome %U $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-first-run --new-window --disk-cache-dir=$(mktemp -d /tmp/chrome.XXXXXX) --user-data-dir=$(mktemp -d /tmp/chrome.XXXXXX) > /dev/null 2>&1 &
         ;;
       com.brave.Browser|com.brave.browser)
-        echo "${login_url}" | xargs -t nohup /Applications/Brave\ Browser.app/Contents/MacOS/Brave\ Browser %U "$AWS_VAULT_PL_BROWSER_LAUNCH_OPTS" --no-first-run --new-window --disk-cache-dir=$(mktemp -d /tmp/brave.XXXXXX) --user-data-dir=$(mktemp -d /tmp/brave.XXXXXX) > /dev/null 2>&1 &
+        echo "${login_url}" | xargs -t nohup /Applications/Brave\ Browser.app/Contents/MacOS/Brave\ Browser %U $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-first-run --new-window --disk-cache-dir=$(mktemp -d /tmp/brave.XXXXXX) --user-data-dir=$(mktemp -d /tmp/brave.XXXXXX) > /dev/null 2>&1 &
         ;;
       *)
         # NOTE PRs welcome to add your browser
@@ -80,10 +80,10 @@ function avli() {
     AVLI_TMP_PROFILE=$(mktemp --tmpdir -d avli.XXXXXX)
     case $browser in
       *"chrom"*|*"brave"*)
-        (${browser} "$AWS_VAULT_PL_BROWSER_LAUNCH_OPTS" --no-first-run --new-window --disk-cache-dir="${AVLI_TMP_PROFILE}" --user-data-dir="${AVLI_TMP_PROFILE}" "${login_url}" 2>/dev/null && rm -rf "${AVLI_TMP_PROFILE}") &!
+        (${browser} $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-first-run --new-window --disk-cache-dir="${AVLI_TMP_PROFILE}" --user-data-dir="${AVLI_TMP_PROFILE}" "${login_url}" 2>/dev/null && rm -rf "${AVLI_TMP_PROFILE}") &!
         ;;
       *"firefox"*)
-        (${browser} "$AWS_VAULT_PL_BROWSER_LAUNCH_OPTS" -profile "${AVLI_TMP_PROFILE}" -no-remote -new-instance "${login_url}" 2>/dev/null && rm -rf "${AVLI_TMP_PROFILE}") &!
+        (${browser} $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS -profile "${AVLI_TMP_PROFILE}" -no-remote -new-instance "${login_url}" 2>/dev/null && rm -rf "${AVLI_TMP_PROFILE}") &!
         ;;
       *)
         rm -rf "${AVLI_TMP_PROFILE}"
