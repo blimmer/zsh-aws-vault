@@ -71,6 +71,9 @@ function avli() {
       com.brave.Browser|com.brave.browser)
         echo "${login_url}" | xargs -t nohup /Applications/Brave\ Browser.app/Contents/MacOS/Brave\ Browser %U "$AWS_VAULT_PL_BROWSER_LAUNCH_OPTS" --no-first-run --new-window --disk-cache-dir=$(mktemp -d /tmp/brave.XXXXXX) --user-data-dir=$(mktemp -d /tmp/brave.XXXXXX) > /dev/null 2>&1 &
         ;;
+      com.vivaldi.browser)
+        echo "${login_url}" | xargs -t nohup /Applications/Vivaldi.app/Contents/MacOS/Vivaldi %U $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-first-run --new-window --disk-cache-dir=$(mktemp -d /tmp/vivaldi.XXXXXX) --user-data-dir=$(mktemp -d /tmp/vivaldi.XXXXXX) > /dev/null 2>&1 &
+        ;;
       *)
         # NOTE PRs welcome to add your browser
         echo "Sorry, I don't know how to launch your default browser ($browser) :-("
@@ -79,7 +82,7 @@ function avli() {
   elif _using_linux ; then
     AVLI_TMP_PROFILE=$(mktemp --tmpdir -d avli.XXXXXX)
     case $browser in
-      *"chrom"*|*"brave"*)
+      *"chrom"*|*"brave"*|*"vivaldi"*)
         (${browser} "$AWS_VAULT_PL_BROWSER_LAUNCH_OPTS" --no-first-run --new-window --disk-cache-dir="${AVLI_TMP_PROFILE}" --user-data-dir="${AVLI_TMP_PROFILE}" "${login_url}" 2>/dev/null && rm -rf "${AVLI_TMP_PROFILE}") &!
         ;;
       *"firefox"*)
