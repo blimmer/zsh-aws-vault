@@ -83,7 +83,7 @@ function avli() {
     AVLI_TMP_PROFILE=$(mktemp --tmpdir -d avli.XXXXXX)
     case $browser in
       *"chrom"*|*"brave"*|*"vivaldi"*)
-        (${browser} "$AWS_VAULT_PL_BROWSER_LAUNCH_OPTS" --no-first-run --new-window --disk-cache-dir="${AVLI_TMP_PROFILE}" --user-data-dir="${AVLI_TMP_PROFILE}" "${login_url}" 2>/dev/null && rm -rf "${AVLI_TMP_PROFILE}") &!
+        (${browser} $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-first-run --new-window --disk-cache-dir="${AVLI_TMP_PROFILE}" --user-data-dir="${AVLI_TMP_PROFILE}" "${login_url}" 2>/dev/null && rm -rf "${AVLI_TMP_PROFILE}") &!
         ;;
       *"firefox"*)
         (${browser} $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS -profile "${AVLI_TMP_PROFILE}" -no-remote -new-instance "${login_url}" 2>/dev/null && rm -rf "${AVLI_TMP_PROFILE}") &!
