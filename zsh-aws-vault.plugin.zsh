@@ -68,6 +68,12 @@ function avli() {
       com.google.chrome)
         echo "${login_url}" | xargs -t nohup /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome %U $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-first-run --new-window --disk-cache-dir=$(mktemp -d /tmp/chrome.XXXXXX) --user-data-dir=$(mktemp -d /tmp/chrome.XXXXXX) > /dev/null 2>&1 &
         ;;
+      com.microsoft.edgemac)
+        echo "${login_url}" | xargs -t nohup /Applications/Microsoft\ Edge.app/Contents/MacOS/Microsoft\ Edge %U $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-first-run --new-window --disk-cache-dir=$(mktemp -d /tmp/msedge.XXXXXX) --user-data-dir=$(mktemp -d /tmp/msedge.XXXXXX) > /dev/null 2>&1 &
+        ;;
+      com.microsoft.edgemac.dev)
+        echo "${login_url}" | xargs -t nohup /Applications/Microsoft\ Edge\ Dev.app/Contents/MacOS/Microsoft\ Edge\ Dev %U $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-first-run --new-window --disk-cache-dir=$(mktemp -d /tmp/msedgedev.XXXXXX) --user-data-dir=$(mktemp -d /tmp/msedgedev.XXXXXX) > /dev/null 2>&1 &
+        ;;
       com.brave.Browser|com.brave.browser)
         echo "${login_url}" | xargs -t nohup /Applications/Brave\ Browser.app/Contents/MacOS/Brave\ Browser %U $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-first-run --new-window --disk-cache-dir=$(mktemp -d /tmp/brave.XXXXXX) --user-data-dir=$(mktemp -d /tmp/brave.XXXXXX) > /dev/null 2>&1 &
         ;;
