@@ -80,6 +80,9 @@ function avli() {
       com.vivaldi.browser)
         echo "${login_url}" | xargs -t nohup /Applications/Vivaldi.app/Contents/MacOS/Vivaldi %U $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-first-run --new-window --disk-cache-dir=$(mktemp -d /tmp/vivaldi.XXXXXX) --user-data-dir=$(mktemp -d /tmp/vivaldi.XXXXXX) > /dev/null 2>&1 &
         ;;
+      company.thebrowser.Browser | company.thebrowser.browser | arc) # Arc Browser
+        _open_arc_incog_window "${login_url}" 2>&1 &>/dev/null
+        ;;
       *)
         # NOTE PRs welcome to add your browser
         echo "Sorry, I don't know how to launch your default browser ($browser) :-("
@@ -166,4 +169,16 @@ function _find_browser() {
   else
     # TODO - other platforms
   fi
+}
+
+function _open_arc_incog_window(){
+  url=$1
+  osascript -e "
+    tell application \"Arc\"
+        make new window with properties {incognito:true}
+        activate
+        delay(0.5) # wait for window to open
+        tell front window to make new tab with properties {URL:\"$url\"}
+    end tell
+  "
 }

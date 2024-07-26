@@ -63,6 +63,7 @@ browser. By default, it will pick your default URL handler in MacOS. It supports
 | `com.google.chrome`          | Chrome  | Opens a new private browsing window for the session. This allows for multiple profiles to be open simultaneously. |
 | `com.brave.Browser`          | Brave   | Opens a new private browsing window for the session. This allows for multiple profiles to be open simultaneously. |
 | `com.vivaldi.browser`        | Vivaldi | Opens a new private browsing window for the session. This allows for multiple profiles to be open simultaneously. |
+| `company.thebrowser.browser` | Arc (OSX only) | Opens a new private browsing window for the session. This allows for multiple profiles to be open simultaneously. |
 
 You can pass arbitrary parameters when launching the browser by setting the optional `AWS_VAULT_PL_BROWSER_LAUNCH_OPTS`
 environment variable. For example, if you wanted to start new `avli` browser windows maximized, you can set
