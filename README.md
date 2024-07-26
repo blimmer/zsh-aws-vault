@@ -12,13 +12,13 @@ This plugin is intended to be used with oh-my-zsh
 2. `$ git clone https://github.com/blimmer/zsh-aws-vault.git`
 3. In your .zshrc, add `zsh-aws-vault` to your oh-my-zsh plugins:
 
-  ```bash
-  plugins=(
-    git
-    ruby
-    zsh-aws-vault
-  )
-  ```
+```bash
+plugins=(
+  git
+  ruby
+  zsh-aws-vault
+)
+```
 
 ### [zgen](https://github.com/tarjoilija/zgen)
 
@@ -34,16 +34,16 @@ This plugin is pretty simple - it provides:
 
 ### Aliases
 
-| Alias          | Expression                                 |
-|----------------|--------------------------------------------|
-| av             | aws-vault                                  |
-| ave            | aws-vault exec                             |
-| avl            | aws-vault login                            |
-| avll           | aws-vault login -s                         |
-| [avli](#avli)  | aws-vault login in private browsing window |
-| avs            | aws-vault server                           |
-| [avsh](#avsh)  | aws-vault exec $1 -- zsh                   |
-| avp            | list aws config / role ARNs                |
+| Alias         | Expression                                   |
+| ------------- | -------------------------------------------- |
+| av            | aws-vault                                    |
+| ave           | aws-vault exec                               |
+| avl           | aws-vault login                              |
+| avll          | aws-vault login -s                           |
+| [avli](#avli) | aws-vault login in sandboxed browser profile |
+| avs           | aws-vault server                             |
+| [avsh](#avsh) | aws-vault exec $1 -- zsh                     |
+| avp           | list aws config / role ARNs                  |
 
 ### `avli`
 
@@ -51,18 +51,22 @@ Login in Private Browsing Window
 
 > This alias is currently only supported in OSX and Linux.
 
-This alias will open a new browser window after getting the temporary login URL for your profile.
+This alias will create a sandboxed browser profile after getting the temporary login URL for your AWS profile. This
+allows opening multiple profiles simultaneously in different browser profiles. This differs from using incognito mode,
+which shares the same profile across all incognito windows.
 
 You can specify a specific browser to handle your login URL by setting `AWS_VAULT_PL_BROWSER` to the bundle name of the
 browser. By default, it will pick your default URL handler in MacOS. It supports the following browsers:
 
-| `AWS_VAULT_PL_BROWSER` value | Browser | Description                                                                 |
-|------------------------------|---------|-----------------------------------------------------------------------------|
-| `org.mozilla.firefox`        | Firefox | Creates and/or opens a profile with the same name as your aws-vault profile. This allows for multiple profiles to be open simultaneously. |
-| `org.mozilla.firefoxdeveloperedition`  | Firefox Developer Edition | Creates and/or opens a profile with the same name as your aws-vault profile. This allows for multiple profiles to be open simultaneously. |
-| `com.google.chrome`          | Chrome  | Opens a new private browsing window for the session. This allows for multiple profiles to be open simultaneously. |
-| `com.brave.Browser`          | Brave   | Opens a new private browsing window for the session. This allows for multiple profiles to be open simultaneously. |
-| `com.vivaldi.browser`        | Vivaldi | Opens a new private browsing window for the session. This allows for multiple profiles to be open simultaneously. |
+| `AWS_VAULT_PL_BROWSER` value          | Browser                   |
+| ------------------------------------- | ------------------------- |
+| `org.mozilla.firefox`                 | Firefox                   |
+| `org.mozilla.firefoxdeveloperedition` | Firefox Developer Edition |
+| `com.google.chrome`                   | Chrome                    |
+| `com.microsoft.edgemac`               | Edge                      |
+| `com.microsoft.edgemac.dev`           | Edge Developer Edition    |
+| `com.brave.Browser`                   | Brave                     |
+| `com.vivaldi.browser`                 | Vivaldi                   |
 
 You can pass arbitrary parameters when launching the browser by setting the optional `AWS_VAULT_PL_BROWSER_LAUNCH_OPTS`
 environment variable. For example, if you wanted to start new `avli` browser windows maximized, you can set
@@ -109,7 +113,7 @@ to see how I updated the prompt.
 You can customize the prompt segment behavior by overriding these variables:
 
 | Variable Name                  | Default | Description                                                                 |
-|--------------------------------|---------|-----------------------------------------------------------------------------|
+| ------------------------------ | ------- | --------------------------------------------------------------------------- |
 | `AWS_VAULT_PL_CHAR`            | ☁       | The character to display when logged into an aws-vault profile              |
 | `AWS_VAULT_PL_DEFAULT_PROFILE` | default | Only show the character when logged into this profile, not the profile name |
 
@@ -118,6 +122,6 @@ You can customize the prompt segment behavior by overriding these variables:
 You can override the default MFA prompt by adding the `AWS_VAULT_PL_MFA` environment variable.
 
 | `AWS_VAULT_PL_MFA` value | Description                                                                                                                                                                 | Example                                                                                                    |
-|--------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
 | inline                   | Enter your MFA token as an additional argument to the command.                                                                                                              | `avsh default 123456`<br>`avli default 123456`                                                             |
 | yubikey                  | Generate an MFA token from your Yubikey. See the [docs](https://github.com/99designs/aws-vault/blob/master/USAGE.md#using-a-yubikey-as-a-virtual-mfa) for more information. | `avsh default`<br>`avsh default my-yubikey-profile`<br>`avli default`<br>`avli default my-yubikey-profile` |
