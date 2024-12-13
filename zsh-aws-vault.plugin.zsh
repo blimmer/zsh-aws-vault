@@ -15,6 +15,7 @@ alias avs='aws-vault server'
 alias avl='aws-vault login'
 alias avll='aws-vault login -s'
 alias ave='aws-vault exec'
+alias avr='eval $(AWS_VAULT=  aws-vault export --format=export-env $AWS_VAULT)'
 
 #--------------------------------------------------------------------#
 # Convenience Functions                                              #
