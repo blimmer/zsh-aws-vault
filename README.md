@@ -44,6 +44,7 @@ This plugin is pretty simple - it provides:
 | avs           | aws-vault server                             |
 | [avsh](#avsh) | aws-vault exec $1 -- zsh                     |
 | avp           | list aws config / role ARNs                  |
+| avr           | eval $(AWS_VAULT=  aws-vault export --format=export-env $AWS_VAULT) |
 
 ### `avli`
 
@@ -81,6 +82,10 @@ For example, place the relevant `AWS` environment variables for your default pro
 ```bash
 avsh default
 ```
+
+### `avr`
+
+Refresh your credentials without exiting the existing subshell. Available when using aws-vault 7+.
 
 ### Prompt Segment
 
