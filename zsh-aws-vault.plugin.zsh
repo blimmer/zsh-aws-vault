@@ -87,16 +87,26 @@ function avli() {
         ;;
     esac
   elif _using_linux ; then
-    AVLI_TMP_PROFILE=$(mktemp --tmpdir -d avli.XXXXXX)
+    if [[ -v AWS_VAULT_PL_PERSIST_PROFILE ]]; then
+      AVLI_PROFILE=${AWS_VAULT_PL_PERSIST_PROFILE:-"$HOME/.aws/avli/"}
+      if [[ "${AVLI_PROFILE}" != */ ]]; then
+        AVLI_PROFILE="${AVLI_PROFILE}/"
+      fi
+      AVLI_PROFILE="${AVLI_PROFILE}${browser//[\/ ]/_}/${1//[\/ ]/_}"
+      mkdir -p "$AVLI_PROFILE"
+    else
+      AVLI_PROFILE=$(mktemp --tmpdir -d avli.XXXXXX)
+    fi
+    
     case $browser in
       *"chrom"*|*"brave"*|*"vivaldi"*)
-        (${browser} $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-first-run --new-window --disk-cache-dir="${AVLI_TMP_PROFILE}" --user-data-dir="${AVLI_TMP_PROFILE}" "${login_url}" 2>/dev/null && rm -rf "${AVLI_TMP_PROFILE}") &!
+        (${browser} $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-first-run --new-window --disk-cache-dir="${AVLI_PROFILE}" --user-data-dir="${AVLI_PROFILE}" "${login_url}" 2>/dev/null && [[ ! -v AWS_VAULT_PL_PERSIST_PROFILE ]] && rm -rf ${AVLI_PROFILE}) &!
         ;;
       *"firefox"*)
-        (${browser} $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS -profile "${AVLI_TMP_PROFILE}" -no-remote -new-instance "${login_url}" 2>/dev/null && rm -rf "${AVLI_TMP_PROFILE}") &!
+        (${browser} $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS -profile "${AVLI_PROFILE}" -no-remote -new-instance "${login_url}" 2>/dev/null && [[ ! -v AWS_VAULT_PL_PERSIST_PROFILE ]] && rm -rf ${AVLI_PROFILE}) &!
         ;;
       *)
-        rm -rf "${AVLI_TMP_PROFILE}"
+        rm -rf "${AVLI_PROFILE}"
         # NOTE PRs welcome to add your browser
         echo "Sorry, I don't know how to launch your default browser ($browser) :-("
         ;;
