@@ -56,6 +56,8 @@ This alias will create a sandboxed browser profile after getting the temporary l
 allows opening multiple profiles simultaneously in different browser profiles. This differs from using incognito mode,
 which shares the same profile across all incognito windows.
 
+By default, the session profile will be deleted when the browser is closed. In order to persist a profile, you can set an empty variable `AWS_VAULT_PL_PERSIST_PROFILE` which will store the profile in the default path of `~/.aws/avli`. To support browsers that run in a sandbox, a path can be specified such as `AWS_VAULT_PL_PERSIST_PROFILE=~/snap/firefox/common/.mozilla/firefox`. This functionality is currently only supported in Linux.
+
 You can specify a specific browser to handle your login URL by setting `AWS_VAULT_PL_BROWSER` to the bundle name of the
 browser. By default, it will pick your default URL handler in MacOS. It supports the following browsers:
 
