@@ -35,6 +35,35 @@ function avsh() {
 }
 
 function avli() {
+  function _using_osx() {
+    [[ $(uname) == "Darwin" ]]
+  }
+
+  function _using_linux() {
+    [[ $(uname) == "Linux" ]]
+  }
+
+  function _find_browser() {
+    if [ -n "${AWS_VAULT_PL_BROWSER}" ]; then
+      # use the browser bundle specified
+      echo "${AWS_VAULT_PL_BROWSER}"
+    elif [ -n "${BROWSER}" ]; then
+        echo "${BROWSER}"
+    elif _using_osx ; then
+      # Detect the browser in launchservices
+      # https://stackoverflow.com/a/32465364/808678
+      local prefs=~/Library/Preferences/com.apple.LaunchServices/com.apple.launchservices.secure.plist
+      plutil -convert xml1 $prefs
+      grep 'https' -b3 $prefs | awk 'NR==2 {split($2, arr, "[><]"); print arr[3]}';
+      plutil -convert binary1 $prefs
+    elif _using_linux ; then
+      # This is bad but it's marginally better than hardcoding google-chrome
+      xdg-settings get default-web-browser | cut -d'.' -f1
+    else
+      # TODO - other platforms
+    fi
+  }
+
   local login_url
   case ${AWS_VAULT_PL_MFA} in
     inline)
@@ -134,37 +163,5 @@ function prompt_aws_vault_segment() {
     else
       echo -n "$AWS_VAULT_PL_CHAR $AWS_VAULT"
     fi
-  fi
-}
-
-#--------------------------------------------------------------------#
-# Utility Functions                                                  #
-#--------------------------------------------------------------------#
-function _using_osx() {
-  [[ $(uname) == "Darwin" ]]
-}
-
-function _using_linux() {
-  [[ $(uname) == "Linux" ]]
-}
-
-function _find_browser() {
-  if [ -n "${AWS_VAULT_PL_BROWSER}" ]; then
-    # use the browser bundle specified
-    echo "${AWS_VAULT_PL_BROWSER}"
-  elif [ -n "${BROWSER}" ]; then
-      echo "${BROWSER}"
-  elif _using_osx ; then
-    # Detect the browser in launchservices
-    # https://stackoverflow.com/a/32465364/808678
-    local prefs=~/Library/Preferences/com.apple.LaunchServices/com.apple.launchservices.secure.plist
-    plutil -convert xml1 $prefs
-    grep 'https' -b3 $prefs | awk 'NR==2 {split($2, arr, "[><]"); print arr[3]}';
-    plutil -convert binary1 $prefs
-  elif _using_linux ; then
-    # This is bad but it's marginally better than hardcoding google-chrome
-    xdg-settings get default-web-browser | cut -d'.' -f1
-  else
-    # TODO - other platforms
   fi
 }
