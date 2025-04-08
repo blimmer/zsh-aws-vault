@@ -73,6 +73,7 @@ function avli() {
 
     if [ "$AWS_VAULT_PL_PERSIST_PROFILE" = "true" ]; then
       browser_profile_path="${AWS_VAULT_PL_PERSIST_PROFILE_PATH}/${browser}/${profile}"
+      mkdir -p "${AWS_VAULT_PL_PERSIST_PROFILE_PATH}/${browser}"
     else
       browser_profile_path=$(mktemp --tmpdir -d $browser.$profile.XXXXXX)
     fi
@@ -113,7 +114,6 @@ function avli() {
 
   if _using_osx ; then
     local browser_profile_path=$(_get_browser_profile_path $browser $1)
-    mkdir -p $browser_profile_path
     case $browser in
       # TODO: this doesn't seem to work on MacOS Firefox - I think the profile needs to be in the "expected" location, as we were doing before...
       # I need to dig more into this.
