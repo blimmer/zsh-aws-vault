@@ -23,6 +23,14 @@ plugins=(
 1. add `zgen load blimmer/zsh-aws-vault` to your '!saved/save' block
 1. `zgen update`
 
+## Upgrading
+
+Some releases might have breaking changes to behaviors. Before upgrading, please review
+[the Releases page](https://github.com/blimmer/zsh-aws-vault/releases) to understand the changes. This package follows
+Semantic Versioning best-practices.
+
+An upgrade guide for major versions is available in [UPGRADING.md](/UPGRADING.md).
+
 ## Features
 
 This plugin provides a comprehensive set of tools for working with aws-vault:
