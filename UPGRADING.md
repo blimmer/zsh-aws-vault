@@ -14,6 +14,8 @@ inconsistent behavior.
   ApplicationSupport directory, as before. This means that, by default, Firefox `avli` profiles are completely transient
   by default. If you'd like to retain your browser profile between launches, set the `AWS_VAULT_PL_PERSIST_PROFILE`
   environment variable to `true`.
+- `avli` calls using Chrome (and chrome-like browsers) no longer pass the `--new-window` flag by default. To retain the
+  existing behavior, set the `AWS_VAULT_PL_BROWSER_LAUNCH_OPTS` to include `--new-window`.
 - `avli` calls use `nohup` to ensure the browser is not terminated if the terminal window that launched it is closed.
 - Utility functions `_using_osx()`, `_using_linux()`, and `_find_browser()` are no longer exported to your ZSH
   environment. These utility functions are internal and should not have been exposed in your ZSH environment. If you
