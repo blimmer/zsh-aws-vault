@@ -6,6 +6,8 @@ AWS_VAULT_PL_CHAR=${AWS_VAULT_PL_CHAR:-$'\u2601'} # "the cloud"
 AWS_VAULT_PL_BROWSER=${AWS_VAULT_PL_BROWSER:-''}
 AWS_VAULT_PL_BROWSER_LAUNCH_OPTS=${AWS_VAULT_PL_BROWSER_LAUNCH_OPTS:-''}
 AWS_VAULT_PL_MFA=${AWS_VAULT_PL_MFA:-''}
+AWS_VAULT_PL_PERSIST_PROFILE=${AWS_VAULT_PL_PERSIST_PROFILE:-false}
+AWS_VAULT_PL_PERSIST_PROFILE_PATH=${AWS_VAULT_PL_PERSIST_PROFILE_PATH:-"$HOME/.config/zsh-aws-vault/avli-profiles"}
 
 #--------------------------------------------------------------------#
 # Aliases                                                            #
@@ -35,6 +37,57 @@ function avsh() {
 }
 
 function avli() {
+  function _using_osx() {
+    [[ $(uname) == "Darwin" ]]
+  }
+
+  function _using_linux() {
+    [[ $(uname) == "Linux" ]]
+  }
+
+  function _find_browser() {
+    if [ -n "${AWS_VAULT_PL_BROWSER}" ]; then
+      # use the browser bundle specified
+      echo "${AWS_VAULT_PL_BROWSER}"
+    elif [ -n "${BROWSER}" ]; then
+        echo "${BROWSER}"
+    elif _using_osx ; then
+      # Detect the browser in launchservices
+      # https://stackoverflow.com/a/32465364/808678
+      local prefs=~/Library/Preferences/com.apple.LaunchServices/com.apple.launchservices.secure.plist
+      plutil -convert xml1 $prefs
+      grep 'https' -b3 $prefs | awk 'NR==2 {split($2, arr, "[><]"); print arr[3]}';
+      plutil -convert binary1 $prefs
+    elif _using_linux ; then
+      # This is bad but it's marginally better than hardcoding google-chrome
+      xdg-settings get default-web-browser | cut -d'.' -f1
+    else
+      # TODO - other platforms
+    fi
+  }
+
+  function _get_browser_profile_path() {
+    local browser=$1
+    local profile=$2
+    local browser_profile_path=""
+
+    if [ "$AWS_VAULT_PL_PERSIST_PROFILE" = "true" ]; then
+      browser_profile_path="${AWS_VAULT_PL_PERSIST_PROFILE_PATH}/${browser}/${profile}"
+      mkdir -p "${AWS_VAULT_PL_PERSIST_PROFILE_PATH}/${browser}"
+    else
+      browser_profile_path=$(mktemp --tmpdir -d $browser.$profile.XXXXXX)
+    fi
+
+    echo $browser_profile_path
+  }
+
+  function _maybe_clean_up_browser_profile() {
+    local browser_profile_path=$1
+    if [ "$AWS_VAULT_PL_PERSIST_PROFILE" = "false" ]; then
+      rm -rf $browser_profile_path
+    fi
+  }
+
   local login_url
   case ${AWS_VAULT_PL_MFA} in
     inline)
@@ -56,30 +109,49 @@ function avli() {
   local browser="$(_find_browser)"
 
   if _using_osx ; then
+    local browser_profile_path=$(_get_browser_profile_path $browser $1)
     case $browser in
       org.mozilla.firefox)
-        # Ensure a profile is created (can run idempotently) and launch it as a disowned process
-        /Applications/Firefox.app/Contents/MacOS/firefox --CreateProfile $1 2>/dev/null && \
-        /Applications/Firefox.app/Contents/MacOS/firefox $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-remote -P $1 "${login_url}" 2>/dev/null &!
+        (
+          nohup /Applications/Firefox.app/Contents/MacOS/firefox $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-remote --profile $browser_profile_path $login_url > /dev/null 2>&1
+          _maybe_clean_up_browser_profile "${browser_profile_path}"
+        ) &!
         ;;
       org.mozilla.firefoxdeveloperedition)
-        /Applications/Firefox\ Developer\ Edition.app/Contents/MacOS/firefox --CreateProfile $1 2>/dev/null && \
-        /Applications/Firefox\ Developer\ Edition.app/Contents/MacOS/firefox $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-remote -P $1 "${login_url}" 2>/dev/null &!
+        (
+          nohup /Applications/Firefox\ Developer\ Edition.app/Contents/MacOS/firefox $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-remote --profile $browser_profile_path $login_url > /dev/null 2>&1
+          _maybe_clean_up_browser_profile "${browser_profile_path}"
+        ) &!
         ;;
       com.google.chrome)
-        echo "${login_url}" | xargs -t nohup /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome %U $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-first-run --new-window --disk-cache-dir=$(mktemp -d /tmp/chrome.XXXXXX) --user-data-dir=$(mktemp -d /tmp/chrome.XXXXXX) > /dev/null 2>&1 &
+        (
+          nohup /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome "${login_url}" $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-first-run --disk-cache-dir="${browser_profile_path}" --user-data-dir="${browser_profile_path}" > /dev/null 2>&1
+          _maybe_clean_up_browser_profile "${browser_profile_path}"
+        ) &!
         ;;
       com.microsoft.edgemac)
-        echo "${login_url}" | xargs -t nohup /Applications/Microsoft\ Edge.app/Contents/MacOS/Microsoft\ Edge %U $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-first-run --new-window --disk-cache-dir=$(mktemp -d /tmp/msedge.XXXXXX) --user-data-dir=$(mktemp -d /tmp/msedge.XXXXXX) > /dev/null 2>&1 &
+        (
+          nohup /Applications/Microsoft\ Edge.app/Contents/MacOS/Microsoft\ Edge "${login_url}" $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-first-run --disk-cache-dir="${browser_profile_path}" --user-data-dir="${browser_profile_path}" > /dev/null 2>&1
+          _maybe_clean_up_browser_profile "${browser_profile_path}"
+        ) &!
         ;;
       com.microsoft.edgemac.dev)
-        echo "${login_url}" | xargs -t nohup /Applications/Microsoft\ Edge\ Dev.app/Contents/MacOS/Microsoft\ Edge\ Dev %U $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-first-run --new-window --disk-cache-dir=$(mktemp -d /tmp/msedgedev.XXXXXX) --user-data-dir=$(mktemp -d /tmp/msedgedev.XXXXXX) > /dev/null 2>&1 &
+        (
+          nohup /Applications/Microsoft\ Edge\ Dev.app/Contents/MacOS/Microsoft\ Edge\ Dev "${login_url}" $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-first-run --disk-cache-dir="${browser_profile_path}" --user-data-dir="${browser_profile_path}" > /dev/null 2>&1
+          _maybe_clean_up_browser_profile "${browser_profile_path}"
+        ) &!
         ;;
       com.brave.Browser|com.brave.browser)
-        echo "${login_url}" | xargs -t nohup /Applications/Brave\ Browser.app/Contents/MacOS/Brave\ Browser %U $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-first-run --new-window --disk-cache-dir=$(mktemp -d /tmp/brave.XXXXXX) --user-data-dir=$(mktemp -d /tmp/brave.XXXXXX) > /dev/null 2>&1 &
+        (
+          nohup /Applications/Brave\ Browser.app/Contents/MacOS/Brave\ Browser "${login_url}" $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-first-run --disk-cache-dir="${browser_profile_path}" --user-data-dir="${browser_profile_path}" > /dev/null 2>&1
+          _maybe_clean_up_browser_profile "${browser_profile_path}"
+        ) &!
         ;;
       com.vivaldi.browser)
-        echo "${login_url}" | xargs -t nohup /Applications/Vivaldi.app/Contents/MacOS/Vivaldi %U $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-first-run --new-window --disk-cache-dir=$(mktemp -d /tmp/vivaldi.XXXXXX) --user-data-dir=$(mktemp -d /tmp/vivaldi.XXXXXX) > /dev/null 2>&1 &
+        (
+          nohup /Applications/Vivaldi.app/Contents/MacOS/Vivaldi "${login_url}" $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-first-run --disk-cache-dir="${browser_profile_path}" --user-data-dir="${browser_profile_path}" > /dev/null 2>&1
+          _maybe_clean_up_browser_profile "${browser_profile_path}"
+        ) &!
         ;;
       *)
         # NOTE PRs welcome to add your browser
@@ -87,16 +159,22 @@ function avli() {
         ;;
     esac
   elif _using_linux ; then
-    AVLI_TMP_PROFILE=$(mktemp --tmpdir -d avli.XXXXXX)
+    local browser_profile_path=$(_get_browser_profile_path $browser $1)
     case $browser in
       *"chrom"*|*"brave"*|*"vivaldi"*)
-        (${browser} $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-first-run --new-window --disk-cache-dir="${AVLI_TMP_PROFILE}" --user-data-dir="${AVLI_TMP_PROFILE}" "${login_url}" 2>/dev/null && rm -rf "${AVLI_TMP_PROFILE}") &!
+        (
+          nohup ${browser} $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-first-run --disk-cache-dir="${browser_profile_path}" --user-data-dir="${browser_profile_path}" "${login_url}" > /dev/null 2>&1
+          _maybe_clean_up_browser_profile "${browser_profile_path}"
+        ) &!
         ;;
       *"firefox"*)
-        (${browser} $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS -profile "${AVLI_TMP_PROFILE}" -no-remote -new-instance "${login_url}" 2>/dev/null && rm -rf "${AVLI_TMP_PROFILE}") &!
+        (
+          nohup ${browser} $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --profile "${browser_profile_path}" --no-remote --new-instance "${login_url}" > /dev/null 2>&1
+          _maybe_clean_up_browser_profile "${browser_profile_path}"
+        ) &!
         ;;
       *)
-        rm -rf "${AVLI_TMP_PROFILE}"
+        rm -rf $browser_profile_path
         # NOTE PRs welcome to add your browser
         echo "Sorry, I don't know how to launch your default browser ($browser) :-("
         ;;
@@ -134,37 +212,5 @@ function prompt_aws_vault_segment() {
     else
       echo -n "$AWS_VAULT_PL_CHAR $AWS_VAULT"
     fi
-  fi
-}
-
-#--------------------------------------------------------------------#
-# Utility Functions                                                  #
-#--------------------------------------------------------------------#
-function _using_osx() {
-  [[ $(uname) == "Darwin" ]]
-}
-
-function _using_linux() {
-  [[ $(uname) == "Linux" ]]
-}
-
-function _find_browser() {
-  if [ -n "${AWS_VAULT_PL_BROWSER}" ]; then
-    # use the browser bundle specified
-    echo "${AWS_VAULT_PL_BROWSER}"
-  elif [ -n "${BROWSER}" ]; then
-      echo "${BROWSER}"
-  elif _using_osx ; then
-    # Detect the browser in launchservices
-    # https://stackoverflow.com/a/32465364/808678
-    local prefs=~/Library/Preferences/com.apple.LaunchServices/com.apple.launchservices.secure.plist
-    plutil -convert xml1 $prefs
-    grep 'https' -b3 $prefs | awk 'NR==2 {split($2, arr, "[><]"); print arr[3]}';
-    plutil -convert binary1 $prefs
-  elif _using_linux ; then
-    # This is bad but it's marginally better than hardcoding google-chrome
-    xdg-settings get default-web-browser | cut -d'.' -f1
-  else
-    # TODO - other platforms
   fi
 }

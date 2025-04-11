@@ -8,14 +8,12 @@ oh-my-zsh plugin for [aws-vault](https://github.com/99designs/aws-vault)
 
 This plugin is intended to be used with oh-my-zsh
 
-1. `$ cd ~/.oh-my-zsh/custom/plugins` (you may have to create the folder)
-2. `$ git clone https://github.com/blimmer/zsh-aws-vault.git`
+1. `cd ~/.oh-my-zsh/custom/plugins` (you may have to create the folder)
+2. `git clone https://github.com/blimmer/zsh-aws-vault.git`
 3. In your .zshrc, add `zsh-aws-vault` to your oh-my-zsh plugins:
 
 ```bash
 plugins=(
-  git
-  ruby
   zsh-aws-vault
 )
 ```
@@ -25,67 +23,94 @@ plugins=(
 1. add `zgen load blimmer/zsh-aws-vault` to your '!saved/save' block
 1. `zgen update`
 
+## Upgrading
+
+Some releases might have breaking changes to behaviors. Before upgrading, please review
+[the Releases page](https://github.com/blimmer/zsh-aws-vault/releases) to understand the changes. This package follows
+Semantic Versioning best-practices.
+
+An upgrade guide for major versions is available in [UPGRADING.md](/UPGRADING.md).
+
 ## Features
 
-This plugin is pretty simple - it provides:
+This plugin provides a comprehensive set of tools for working with aws-vault:
 
-- aliases
-- prompt segment
+- **Aliases** for common aws-vault commands:
 
-### Aliases
+  - `av` - aws-vault
+  - `avs` - aws-vault server
+  - `avl` - aws-vault login
+  - `avll` - aws-vault login -s (prints the login URL to the screen without opening your browser)
+  - `ave` - aws-vault exec
 
-| Alias         | Expression                                   |
-| ------------- | -------------------------------------------- |
-| av            | aws-vault                                    |
-| ave           | aws-vault exec                               |
-| avl           | aws-vault login                              |
-| avll          | aws-vault login -s                           |
-| [avli](#avli) | aws-vault login in sandboxed browser profile |
-| avs           | aws-vault server                             |
-| [avsh](#avsh) | aws-vault exec $1 -- zsh                     |
-| avp           | list aws config / role ARNs                  |
-| avr           | eval $(AWS_VAULT=  aws-vault export --format=export-env $AWS_VAULT) |
+- **Convenience Functions**:
+
+  - [`avsh`](#avsh) - Open a new shell with AWS credentials
+  - [`avli`](#avli) - Login to AWS console in your default browser with profile isolation
+  - [`avr`](#avr) - Refresh in-context `AWS_*` environment variables
+  - `avp` - List all configured AWS profiles with their types (IAM Keys or Roles)
 
 ### `avli`
 
-Login in Private Browsing Window
+Login in an isolated browser profile.
 
-> This alias is currently only supported in OSX and Linux.
+> ℹ️ This function is currently only supported in MacOS and Linux.
 
-This alias will create a sandboxed browser profile after getting the temporary login URL for your AWS profile. This
+This function will create a sandboxed browser profile after getting the temporary login URL for your AWS profile. This
 allows opening multiple profiles simultaneously in different browser profiles. This differs from using incognito mode,
 which shares the same profile across all incognito windows.
 
-You can specify a specific browser to handle your login URL by setting `AWS_VAULT_PL_BROWSER` to the bundle name of the
-browser. By default, it will pick your default URL handler in MacOS. It supports the following browsers:
+#### Specifying a Browser
 
-| `AWS_VAULT_PL_BROWSER` value          | Browser                   |
-| ------------------------------------- | ------------------------- |
-| `org.mozilla.firefox`                 | Firefox                   |
-| `org.mozilla.firefoxdeveloperedition` | Firefox Developer Edition |
-| `com.google.chrome`                   | Chrome                    |
-| `com.microsoft.edgemac`               | Edge                      |
-| `com.microsoft.edgemac.dev`           | Edge Developer Edition    |
-| `com.brave.Browser`                   | Brave                     |
-| `com.vivaldi.browser`                 | Vivaldi                   |
+You can specify a browser to use for `avli` by setting the `AWS_VAULT_PL_BROWSER` environment variable to the appropriate
+browser.
 
-You can pass arbitrary parameters when launching the browser by setting the optional `AWS_VAULT_PL_BROWSER_LAUNCH_OPTS`
+In MacOS, we use the default browser set at the system level. You can override using these values:
+
+| Browser                   | `AWS_VAULT_PL_BROWSER` value (MacOS)  |
+| ------------------------- | ------------------------------------- |
+| Firefox                   | `org.mozilla.firefox`                 |
+| Firefox Developer Edition | `org.mozilla.firefoxdeveloperedition` |
+| Chrome                    | `com.google.chrome`                   |
+| Edge                      | `com.microsoft.edgemac`               |
+| Edge Developer Edition    | `com.microsoft.edgemac.dev`           |
+| Brave                     | `com.brave.Browser`                   |
+| Vivaldi                   | `com.vivaldi.browser`                 |
+
+On Linux, we use `xdg-settings` to find the default. You can set the `AWS_VAULT_PL_BROWSER` environment variable to
+your browser's binary (e.g., `chromium` or `/usr/bin/chromium`).
+
+#### Passing Additional Browser Launch Options
+
+You can pass arbitrary parameters when launching your browser by setting the optional `AWS_VAULT_PL_BROWSER_LAUNCH_OPTS`
 environment variable. For example, if you wanted to start new `avli` browser windows maximized, you can set
 `AWS_VAULT_PL_BROWSER_LAUNCH_OPTS="--start-maximized"`. Refer to your browser documentation for possible options.
 
+#### Reusing Sandboxed Profiles
+
+By default, each time you run `avli`, a new, isolated browser profile is created. If you would like to reuse the same
+browser profile between calls to `avli`, set the `AWS_VAULT_PL_PERSIST_PROFILE` environment variable to `true`.
+
+This allows you to install extensions/addons, create bookmarks, retain history, etc. in the sandboxed browser.
+
+By default, the profiles are stored in `~/.config/zsh-aws-vault/avli-profiles/<browser-name>/<profile-name>`. You can
+customize the path portion of this (`~/.config/zsh-aws-vault/avli-profiles`) by setting the
+`AWS_VAULT_PL_PERSIST_PROFILE_PATH` environment variable.
+
 ### `avsh`
 
-Create a shell for a given profile.
-
-For example, place the relevant `AWS` environment variables for your default profile by running:
+Create a shell for a given profile. For example, this command replaces the relevant `AWS_*` environment variables for
+the `default` profile in a new shell session:
 
 ```bash
 avsh default
 ```
 
+This is a powerful tool that allows only placing AWS credentials in your shell session when needed.
+
 ### `avr`
 
-Refresh your credentials without exiting the existing subshell. Available when using aws-vault 7+.
+Refresh your credentials without exiting the existing subshell. Requires `aws-vault` v7 or newer.
 
 ### Prompt Segment
 
