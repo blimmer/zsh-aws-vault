@@ -88,10 +88,6 @@ function avli() {
     fi
   }
 
-  function _chromium_common_flags() {
-    echo "--no-first-run --new-window"
-  }
-
   local login_url
   case ${AWS_VAULT_PL_MFA} in
     inline)
@@ -129,31 +125,31 @@ function avli() {
         ;;
       com.google.chrome)
         (
-          nohup /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome "${login_url}" $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS $(_chromium_common_flags) --disk-cache-dir="${browser_profile_path}" --user-data-dir="${browser_profile_path}" > /dev/null 2>&1
+          nohup /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome "${login_url}" $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-first-run --disk-cache-dir="${browser_profile_path}" --user-data-dir="${browser_profile_path}" > /dev/null 2>&1
           _maybe_clean_up_browser_profile "${browser_profile_path}"
         ) &!
         ;;
       com.microsoft.edgemac)
         (
-          nohup /Applications/Microsoft\ Edge.app/Contents/MacOS/Microsoft\ Edge "${login_url}" $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS $(_chromium_common_flags) --disk-cache-dir="${browser_profile_path}" --user-data-dir="${browser_profile_path}" > /dev/null 2>&1
+          nohup /Applications/Microsoft\ Edge.app/Contents/MacOS/Microsoft\ Edge "${login_url}" $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-first-run --disk-cache-dir="${browser_profile_path}" --user-data-dir="${browser_profile_path}" > /dev/null 2>&1
           _maybe_clean_up_browser_profile "${browser_profile_path}"
         ) &!
         ;;
       com.microsoft.edgemac.dev)
         (
-          nohup /Applications/Microsoft\ Edge\ Dev.app/Contents/MacOS/Microsoft\ Edge\ Dev "${login_url}" $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS $(_chromium_common_flags) --disk-cache-dir="${browser_profile_path}" --user-data-dir="${browser_profile_path}" > /dev/null 2>&1
+          nohup /Applications/Microsoft\ Edge\ Dev.app/Contents/MacOS/Microsoft\ Edge\ Dev "${login_url}" $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-first-run --disk-cache-dir="${browser_profile_path}" --user-data-dir="${browser_profile_path}" > /dev/null 2>&1
           _maybe_clean_up_browser_profile "${browser_profile_path}"
         ) &!
         ;;
       com.brave.Browser|com.brave.browser)
         (
-          nohup /Applications/Brave\ Browser.app/Contents/MacOS/Brave\ Browser "${login_url}" $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS $(_chromium_common_flags) --disk-cache-dir="${browser_profile_path}" --user-data-dir="${browser_profile_path}" > /dev/null 2>&1
+          nohup /Applications/Brave\ Browser.app/Contents/MacOS/Brave\ Browser "${login_url}" $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-first-run --disk-cache-dir="${browser_profile_path}" --user-data-dir="${browser_profile_path}" > /dev/null 2>&1
           _maybe_clean_up_browser_profile "${browser_profile_path}"
         ) &!
         ;;
       com.vivaldi.browser)
         (
-          nohup /Applications/Vivaldi.app/Contents/MacOS/Vivaldi "${login_url}" $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS $(_chromium_common_flags) --disk-cache-dir="${browser_profile_path}" --user-data-dir="${browser_profile_path}" > /dev/null 2>&1
+          nohup /Applications/Vivaldi.app/Contents/MacOS/Vivaldi "${login_url}" $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-first-run --disk-cache-dir="${browser_profile_path}" --user-data-dir="${browser_profile_path}" > /dev/null 2>&1
           _maybe_clean_up_browser_profile "${browser_profile_path}"
         ) &!
         ;;
@@ -167,7 +163,7 @@ function avli() {
     case $browser in
       *"chrom"*|*"brave"*|*"vivaldi"*)
         (
-          nohup ${browser} $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS $(_chromium_common_flags) --disk-cache-dir="${browser_profile_path}" --user-data-dir="${browser_profile_path}" "${login_url}" 2>/dev/null
+          nohup ${browser} $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-first-run --disk-cache-dir="${browser_profile_path}" --user-data-dir="${browser_profile_path}" "${login_url}" 2>/dev/null
           _maybe_clean_up_browser_profile "${browser_profile_path}"
         ) &!
         ;;
