@@ -30,60 +30,74 @@ This plugin is pretty simple - it provides:
 - aliases
 - prompt segment
 
-### Aliases
+### Command
 
-| Alias         | Expression                                                         |
-| ------------- | ------------------------------------------------------------------ |
-| av            | aws-vault                                                          |
-| ave           | aws-vault exec                                                     |
-| avl           | aws-vault login                                                    |
-| avll          | aws-vault login -s                                                 |
-| [avli](#avli) | aws-vault login in sandboxed browser profile                       |
-| avs           | aws-vault server                                                   |
-| [avsh](#avsh) | aws-vault exec $1 -- zsh                                           |
-| avp           | list aws config / role ARNs                                        |
-| avr           | eval $(AWS_VAULT= aws-vault export --format=export-env $AWS_VAULT) |
+| Command       | Behavior                                                        |
+| ------------- | --------------------------------------------------------------- |
+| av            | alias - aws-vault                                               |
+| ave           | alias - aws-vault exec                                          |
+| avl           | alias - aws-vault login                                         |
+| avll          | alias - aws-vault login -s                                      |
+| avs           | alias - aws-vault server                                        |
+| [avli](#avli) | aws-vault login in sandboxed browser profile                    |
+| [avsh](#avsh) | Start a new `zsh` with the specified profile                    |
+| avp           | List all AWS profiles                                           |
+| [avr](#avr)   | Refresh the `AWS_*` environment variables in your current shell |
 
 ### `avli`
 
-Login in Private Browsing Window
+Login in an isolated browser profile.
 
-> This alias is currently only supported in MacOS and Linux.
+> ℹ️ This function is currently only supported in MacOS and Linux.
 
-This alias will create a sandboxed browser profile after getting the temporary login URL for your AWS profile. This
+This function will create a sandboxed browser profile after getting the temporary login URL for your AWS profile. This
 allows opening multiple profiles simultaneously in different browser profiles. This differs from using incognito mode,
 which shares the same profile across all incognito windows.
 
-You can specify a specific browser to handle your login URL by setting `AWS_VAULT_PL_BROWSER` to the bundle name of the
-browser. By default, it will pick your default URL handler in MacOS. It supports the following browsers:
+#### Specifying a Browser
 
-| `AWS_VAULT_PL_BROWSER` value          | Browser                   |
-| ------------------------------------- | ------------------------- |
-| `org.mozilla.firefox`                 | Firefox                   |
-| `org.mozilla.firefoxdeveloperedition` | Firefox Developer Edition |
-| `com.google.chrome`                   | Chrome                    |
-| `com.microsoft.edgemac`               | Edge                      |
-| `com.microsoft.edgemac.dev`           | Edge Developer Edition    |
-| `com.brave.Browser`                   | Brave                     |
-| `com.vivaldi.browser`                 | Vivaldi                   |
+You can specify a browser to use for `avli` by setting the `AWS_VAULT_PL_BROWSER` environment variable to the appropriate
+browser.
 
-You can pass arbitrary parameters when launching the browser by setting the optional `AWS_VAULT_PL_BROWSER_LAUNCH_OPTS`
+In MacOS, we use the default browser set at the system level. On Linux, we use `xdg-settings` to find the default.
+
+| Browser                   | `AWS_VAULT_PL_BROWSER` value (MacOS)  | `AWS_VAULT_PL_BROWSER` value (Linux) |
+| ------------------------- | ------------------------------------- | ------------------------------------ |
+| Firefox                   | `org.mozilla.firefox`                 |                                      |
+| Firefox Developer Edition | `org.mozilla.firefoxdeveloperedition` |                                      |
+| Chrome                    | `com.google.chrome`                   |                                      |
+| Edge                      | `com.microsoft.edgemac`               |                                      |
+| Edge Developer Edition    | `com.microsoft.edgemac.dev`           |                                      |
+| Brave                     | `com.brave.Browser`                   |                                      |
+| Vivaldi                   | `com.vivaldi.browser`                 |                                      |
+
+#### Passing Additional Browser Launch Options
+
+You can pass arbitrary parameters when launching your browser by setting the optional `AWS_VAULT_PL_BROWSER_LAUNCH_OPTS`
 environment variable. For example, if you wanted to start new `avli` browser windows maximized, you can set
 `AWS_VAULT_PL_BROWSER_LAUNCH_OPTS="--start-maximized"`. Refer to your browser documentation for possible options.
 
+#### Reusing Sandboxed Profiles
+
+By default, each time you run `avli`, a new, isolated browser profile is created. If you would like to reuse the same
+browser profile between calls to `avli`, set the `AWS_VAULT_PL_PERSIST_PROFILE` environment variable to `true`.
+
+This allows you to install extensions/addons, create bookmarks, retain history, etc. in the sandboxed browser.
+
 ### `avsh`
 
-Create a shell for a given profile.
-
-For example, place the relevant `AWS` environment variables for your default profile by running:
+Create a shell for a given profile. For example, this command replaces the relevant `AWS_*` environment variables for
+the `default` profile in a new shell session:
 
 ```bash
 avsh default
 ```
 
+This is a powerful tool that allows only placing AWS credentials in your shell session when needed.
+
 ### `avr`
 
-Refresh your credentials without exiting the existing subshell. Available when using aws-vault 7+.
+Refresh your credentials without exiting the existing subshell. Requires `aws-vault` v7 or newer.
 
 ### Prompt Segment
 
