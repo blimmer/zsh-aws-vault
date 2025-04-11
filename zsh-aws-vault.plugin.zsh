@@ -163,13 +163,13 @@ function avli() {
     case $browser in
       *"chrom"*|*"brave"*|*"vivaldi"*)
         (
-          nohup ${browser} $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-first-run --disk-cache-dir="${browser_profile_path}" --user-data-dir="${browser_profile_path}" "${login_url}" 2>/dev/null
+          nohup ${browser} $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-first-run --disk-cache-dir="${browser_profile_path}" --user-data-dir="${browser_profile_path}" "${login_url}" > /dev/null 2>&1
           _maybe_clean_up_browser_profile "${browser_profile_path}"
         ) &!
         ;;
       *"firefox"*)
         (
-          nohup ${browser} $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS -profile "${browser_profile_path}" -no-remote -new-instance "${login_url}" 2>/dev/null
+          nohup ${browser} $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --profile "${browser_profile_path}" --no-remote --new-instance "${login_url}" > /dev/null 2>&1
           _maybe_clean_up_browser_profile "${browser_profile_path}"
         ) &!
         ;;
