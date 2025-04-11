@@ -118,12 +118,12 @@ function avli() {
       # TODO: this doesn't seem to work on MacOS Firefox - I think the profile needs to be in the "expected" location, as we were doing before...
       # I need to dig more into this.
       org.mozilla.firefox)
-        /Applications/Firefox.app/Contents/MacOS/firefox $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-remote -P $browser_profile_path $login_url 2>/dev/null && \
-        _maybe_clean_up_browser_profile "${browser_profile_path}" &!
+        (/Applications/Firefox.app/Contents/MacOS/firefox $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-remote --profile $browser_profile_path $login_url 2>/dev/null && \
+        _maybe_clean_up_browser_profile "${browser_profile_path}") &!
         ;;
       org.mozilla.firefoxdeveloperedition)
-        /Applications/Firefox\ Developer\ Edition.app/Contents/MacOS/firefox $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-remote -P $browser_profile_path $login_url 2>/dev/null && \
-          _maybe_clean_up_browser_profile "${browser_profile_path}" &!
+        (/Applications/Firefox\ Developer\ Edition.app/Contents/MacOS/firefox $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS --no-remote --profile $browser_profile_path $login_url 2>/dev/null && \
+          _maybe_clean_up_browser_profile "${browser_profile_path}") &!
         ;;
       com.google.chrome)
         (echo "${login_url}" | xargs -t nohup /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome %U $AWS_VAULT_PL_BROWSER_LAUNCH_OPTS $(_chromium_common_flags) --disk-cache-dir="${browser_profile_path}" --user-data-dir="${browser_profile_path}" > /dev/null 2>&1 && _maybe_clean_up_browser_profile "${browser_profile_path}") &!
