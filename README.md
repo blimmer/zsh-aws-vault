@@ -65,17 +65,20 @@ which shares the same profile across all incognito windows.
 You can specify a browser to use for `avli` by setting the `AWS_VAULT_PL_BROWSER` environment variable to the appropriate
 browser.
 
-In MacOS, we use the default browser set at the system level. On Linux, we use `xdg-settings` to find the default.
+In MacOS, we use the default browser set at the system level. You can override using these values:
 
-| Browser                   | `AWS_VAULT_PL_BROWSER` value (MacOS)  | `AWS_VAULT_PL_BROWSER` value (Linux) |
-| ------------------------- | ------------------------------------- | ------------------------------------ |
-| Firefox                   | `org.mozilla.firefox`                 |                                      |
-| Firefox Developer Edition | `org.mozilla.firefoxdeveloperedition` |                                      |
-| Chrome                    | `com.google.chrome`                   |                                      |
-| Edge                      | `com.microsoft.edgemac`               |                                      |
-| Edge Developer Edition    | `com.microsoft.edgemac.dev`           |                                      |
-| Brave                     | `com.brave.Browser`                   |                                      |
-| Vivaldi                   | `com.vivaldi.browser`                 |                                      |
+| Browser                   | `AWS_VAULT_PL_BROWSER` value (MacOS)  |
+| ------------------------- | ------------------------------------- |
+| Firefox                   | `org.mozilla.firefox`                 |
+| Firefox Developer Edition | `org.mozilla.firefoxdeveloperedition` |
+| Chrome                    | `com.google.chrome`                   |
+| Edge                      | `com.microsoft.edgemac`               |
+| Edge Developer Edition    | `com.microsoft.edgemac.dev`           |
+| Brave                     | `com.brave.Browser`                   |
+| Vivaldi                   | `com.vivaldi.browser`                 |
+
+On Linux, we use `xdg-settings` to find the default. You can set the `AWS_VAULT_PL_BROWSER` environment variable to
+your browser's binary (e.g., `chromium` or `/usr/bin/chromium`).
 
 #### Passing Additional Browser Launch Options
 
@@ -89,6 +92,10 @@ By default, each time you run `avli`, a new, isolated browser profile is created
 browser profile between calls to `avli`, set the `AWS_VAULT_PL_PERSIST_PROFILE` environment variable to `true`.
 
 This allows you to install extensions/addons, create bookmarks, retain history, etc. in the sandboxed browser.
+
+By default, the profiles are stored in `~/.config/zsh-aws-vault/avli-profiles/<browser-name>/<profile-name>`. You can
+customize the path portion of this (`~/.config/zsh-aws-vault/avli-profiles`) by setting the
+`AWS_VAULT_PL_PERSIST_PROFILE_PATH` environment variable.
 
 ### `avsh`
 
