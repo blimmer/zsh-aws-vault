@@ -25,24 +25,22 @@ plugins=(
 
 ## Features
 
-This plugin is pretty simple - it provides:
+This plugin provides a comprehensive set of tools for working with aws-vault:
 
-- aliases
-- prompt segment
+- **Aliases** for common aws-vault commands:
 
-### Command
+  - `av` - aws-vault
+  - `avs` - aws-vault server
+  - `avl` - aws-vault login
+  - `avll` - aws-vault login -s (prints the login URL to the screen without opening your browser)
+  - `ave` - aws-vault exec
 
-| Command       | Behavior                                                        |
-| ------------- | --------------------------------------------------------------- |
-| av            | alias - aws-vault                                               |
-| ave           | alias - aws-vault exec                                          |
-| avl           | alias - aws-vault login                                         |
-| avll          | alias - aws-vault login -s                                      |
-| avs           | alias - aws-vault server                                        |
-| [avli](#avli) | aws-vault login in sandboxed browser profile                    |
-| [avsh](#avsh) | Start a new `zsh` with the specified profile                    |
-| avp           | List all AWS profiles                                           |
-| [avr](#avr)   | Refresh the `AWS_*` environment variables in your current shell |
+- **Convenience Functions**:
+
+  - [`avsh`](#avsh) - Open a new shell with AWS credentials
+  - [`avli`](#avli) - Login to AWS console in your default browser with profile isolation
+  - [`avr`](#avr) - Refresh in-context `AWS_*` environment variables
+  - `avp` - List all configured AWS profiles with their types (IAM Keys or Roles)
 
 ### `avli`
 
