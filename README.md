@@ -8,14 +8,12 @@ oh-my-zsh plugin for [aws-vault](https://github.com/99designs/aws-vault)
 
 This plugin is intended to be used with oh-my-zsh
 
-1. `$ cd ~/.oh-my-zsh/custom/plugins` (you may have to create the folder)
-2. `$ git clone https://github.com/blimmer/zsh-aws-vault.git`
+1. `cd ~/.oh-my-zsh/custom/plugins` (you may have to create the folder)
+2. `git clone https://github.com/blimmer/zsh-aws-vault.git`
 3. In your .zshrc, add `zsh-aws-vault` to your oh-my-zsh plugins:
 
 ```bash
 plugins=(
-  git
-  ruby
   zsh-aws-vault
 )
 ```
@@ -34,23 +32,23 @@ This plugin is pretty simple - it provides:
 
 ### Aliases
 
-| Alias         | Expression                                   |
-| ------------- | -------------------------------------------- |
-| av            | aws-vault                                    |
-| ave           | aws-vault exec                               |
-| avl           | aws-vault login                              |
-| avll          | aws-vault login -s                           |
-| [avli](#avli) | aws-vault login in sandboxed browser profile |
-| avs           | aws-vault server                             |
-| [avsh](#avsh) | aws-vault exec $1 -- zsh                     |
-| avp           | list aws config / role ARNs                  |
-| avr           | eval $(AWS_VAULT=  aws-vault export --format=export-env $AWS_VAULT) |
+| Alias         | Expression                                                         |
+| ------------- | ------------------------------------------------------------------ |
+| av            | aws-vault                                                          |
+| ave           | aws-vault exec                                                     |
+| avl           | aws-vault login                                                    |
+| avll          | aws-vault login -s                                                 |
+| [avli](#avli) | aws-vault login in sandboxed browser profile                       |
+| avs           | aws-vault server                                                   |
+| [avsh](#avsh) | aws-vault exec $1 -- zsh                                           |
+| avp           | list aws config / role ARNs                                        |
+| avr           | eval $(AWS_VAULT= aws-vault export --format=export-env $AWS_VAULT) |
 
 ### `avli`
 
 Login in Private Browsing Window
 
-> This alias is currently only supported in OSX and Linux.
+> This alias is currently only supported in MacOS and Linux.
 
 This alias will create a sandboxed browser profile after getting the temporary login URL for your AWS profile. This
 allows opening multiple profiles simultaneously in different browser profiles. This differs from using incognito mode,
